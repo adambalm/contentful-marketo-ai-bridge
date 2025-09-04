@@ -23,12 +23,10 @@ Marketing teams are often stuck with two bad options: time-consuming manual work
 This tool is a Contentful App that connects directly to a custom FastAPI backend. It allows a marketing manager to enrich and syndicate content to Marketo with a single click, automating the most repetitive parts of campaign preparation.
 
 It has two functions:
-1.  **Immediate Value:** It enriches content with summaries and tags, pushing it to Marketo to accelerate campaigns.
-2.  **Long-Term Value:** It captures every interaction as structured data, creating the foundation for a learning loop that makes the AI smarter, cheaper, and more aligned with the company's voice over time.
+1. **Immediate Value:** It enriches content with summaries and tags, pushing it to Marketo to accelerate campaigns.
+2. **Long-Term Value:** It captures every interaction as structured data, creating the foundation for a learning loop that makes the AI smarter, cheaper, and more aligned with the company's voice over time.
 
 **(This is where the live demo GIF will go. It will be the first thing a reviewer sees.)**
-
-
 
 ### The Governance Connection: The `ActivationLog` as a Dual-Use Asset
 
@@ -42,7 +40,7 @@ This system is designed for enterprise realities, where trust and auditability a
 
 The system uses a decoupled architecture to ensure scalability and maintainability. The Contentful App acts as the user interface, triggering a Python-based backend that orchestrates the AI and MarTech integrations.
 
-```mermaid
+~~~mermaid
 graph TD
     subgraph "User's Browser"
         A[Marketing Manager] -- Clicks 'Activate' button in --> B(Contentful App UI);
@@ -66,16 +64,18 @@ graph TD
     end
 
     B -- Polls for status updates from --> H;
-```
+~~~
 
-### The Living Roadmap: From Activation to True Learning
+### The Living Roadmap: From Activation to 1-to-1 Personalization
 
-This project is built to evolve, just like a real-world enterprise system.
+This project is built to evolve, demonstrating a long-term strategic vision.
 
-* **Phase 1 (This MVP):** The Activation Engine & Data Collection.
-* **Phase 2 (Vision):** A Proactive Content Supply Chain (Webhook-driven, multi-variant generation).
-* **Phase 3 (Vision):** The Fine-Tuning Pipeline (SFT) & Impact Dashboard.
+- **Phase 1 (This MVP):** Build the core activation engine and data collection loop.  
+- **Phase 2 (Vision):** Automate the workflow with proactive webhook triggers.  
+- **Phase 3 (Vision):** Generate content variants for segment-based personalization.  
+- **Phase 4 (Vision):** Implement a fine-tuning pipeline (SFT) to create a specialized model.  
+- **Phase 5 (The North Star):** Integrate with a CDP for real-time, 1-to-1 hyper-personalization.  
 
 ### Setup & Installation
 
-*(Instructions for cloning the repo, setting up the `.env` file, and running the services will go here.)*
+(Instructions for cloning the repo, setting up the .env file, and running the services will go here.)
