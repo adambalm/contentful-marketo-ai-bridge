@@ -64,18 +64,16 @@ graph TD
     end
 
     B -- Polls for status updates from --> H;
-~~~
+```
 
-### The Living Roadmap: From Activation to 1-to-1 Personalization
+### The Living Roadmap: From Activation to True Learning
 
-This project is built to evolve, demonstrating a long-term strategic vision.
+This project is built to evolve, just like a real-world enterprise system.
 
-- **Phase 1 (This MVP):** Build the core activation engine and data collection loop.  
-- **Phase 2 (Vision):** Automate the workflow with proactive webhook triggers.  
-- **Phase 3 (Vision):** Generate content variants for segment-based personalization.  
-- **Phase 4 (Vision):** Implement a fine-tuning pipeline (SFT) to create a specialized model.  
-- **Phase 5 (The North Star):** Integrate with a CDP for real-time, 1-to-1 hyper-personalization.  
+* **Phase 1 (This MVP):** The Activation Engine & Data Collection.
+* **Phase 2 (Vision):** A Proactive Content Supply Chain (Webhook-driven, multi-variant generation).
+* **Phase 3 (Vision):** The Fine-Tuning Pipeline (SFT) & Impact Dashboard.
 
 ### Setup & Installation
 
-(Instructions for cloning the repo, setting up the .env file, and running the services will go here.)
+*(Instructions for cloning the repo, setting up the `.env` file, and running the services will go here.)*
