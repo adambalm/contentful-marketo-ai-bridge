@@ -100,3 +100,6 @@ coverage/
 htmlcov/
 .tox/
 .pytest_cache/
+
+# Job description (private)
+JD.md
