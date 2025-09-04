@@ -1,16 +1,21 @@
-import sys
-from pathlib import Path
+import os
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
+import pytest
 from fastapi.testclient import TestClient
+
+# Set environment before importing app
+os.environ["AI_PROVIDER"] = "local"
 
 from main import app
 
-client = TestClient(app)
+
+@pytest.fixture
+def client():
+    return TestClient(app)
 
 
-def test_health_endpoint():
+def test_health_endpoint(client):
+    """Test the health check endpoint."""
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
