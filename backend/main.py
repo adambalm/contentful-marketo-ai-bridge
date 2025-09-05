@@ -1,6 +1,6 @@
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException
 
@@ -57,8 +57,8 @@ async def activate_content(payload: ActivationPayload):
         # Step 3: AI enrichment (if enabled)
         enrichment_data = None
         if payload.enrichment_enabled:
-            enrichment_result = ai_service.enrich_content(article.dict())
-            enrichment_data = enrichment_result.dict()
+            enrichment_result = ai_service.enrich_content(article.model_dump())
+            enrichment_data = enrichment_result.model_dump()
 
         # Step 4: Add to Marketo list
         marketo_leads = [
@@ -85,7 +85,7 @@ async def activate_content(payload: ActivationPayload):
             enrichment_data=enrichment_data,
             marketo_response=marketo_response,
             errors=errors if errors else None,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
         )
 
     except HTTPException:
@@ -102,5 +102,5 @@ async def activate_content(payload: ActivationPayload):
             enrichment_data=None,
             marketo_response=None,
             errors=errors,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
         )

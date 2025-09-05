@@ -1,0 +1,47 @@
+# Project Architecture Summary
+
+## Core System: AI Content Activation Engine
+
+**Target Role**: Contentful AI Engineer, Marketing Operations  
+**GitHub Repo**: https://github.com/adambalm/contentful-marketo-ai-bridge  
+**Status**: Phase 1 MVP Complete - All tests passing, code pushed to remote
+
+## Technical Stack
+
+### Backend (FastAPI)
+- **Location**: `/backend/`
+- **Framework**: FastAPI with Pydantic v2 validation
+- **AI Integration**: Provider-agnostic service supporting:
+  - OpenAI GPT models (production)
+  - Ollama local models (development) - validated with llama3.2:latest, qwen2.5-coder, deepseek-r1
+- **Testing**: 13 tests passing with pytest-mock
+- **Quality Gates**: Pre-commit hooks (ruff, black, pytest)
+
+### Key Components
+1. **Schemas** (`/backend/schemas/`):
+   - `ArticleIn`: Contentful article validation with controlled vocabulary (25+ marketing tags)
+   - `ActivationPayload`: Webhook request structure
+   - `AIEnrichmentPayload`: AI response validation
+
+2. **Services** (`/backend/services/`):
+   - `AIService`: Provider-agnostic with OpenAI/Ollama implementations
+   - `ContentfulService`: Mock CMS integration
+   - `MarketoService`: Mock marketing automation
+
+3. **API Endpoints**:
+   - `GET /health`: System health check
+   - `POST /activate`: Core workflow (Contentful → AI → Marketo)
+
+## Data Flow
+Contentful CMS → FastAPI Backend → AI Provider → Marketo Lists → ActivationLog
+
+## Environment Configuration
+- `AI_PROVIDER=local`: Uses Ollama (development)
+- `AI_PROVIDER=openai`: Uses GPT models (production)
+- Environment template provided in `.env.template`
+
+## Governance Features
+- **ActivationLog**: Dual-purpose audit trail and training data collection
+- **Controlled Vocabulary**: 25+ validated marketing tags
+- **Pydantic Validation**: Type-safe data processing
+- **Pre-commit Hooks**: Automated code quality enforcement

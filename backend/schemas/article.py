@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class ArticleIn(BaseModel):
@@ -13,7 +13,7 @@ class ArticleIn(BaseModel):
         None, max_length=160, description="Optional existing summary"
     )
     campaign_tags: list[str] = Field(
-        ..., min_items=1, description="Tags from controlled vocabulary"
+        ..., min_length=1, description="Tags from controlled vocabulary"
     )
     alt_text: str | None = Field(
         None,
@@ -24,7 +24,8 @@ class ArticleIn(BaseModel):
     cta_url: str | None = Field(None, description="Call-to-action URL")
     content_type: str = Field("article", description="Content type identifier")
 
-    @validator("campaign_tags")
+    @field_validator("campaign_tags")
+    @classmethod
     def validate_controlled_vocabulary(cls, v):
         """Validate campaign tags against controlled vocabulary taxonomy."""
         allowed_tags = {
@@ -69,15 +70,17 @@ class ArticleIn(BaseModel):
             )
         return v
 
-    @validator("alt_text")
-    def validate_alt_text_when_images_present(cls, v, values):
+    @field_validator("alt_text")
+    @classmethod
+    def validate_alt_text_when_images_present(cls, v, info):
         """Require alt text when article contains images."""
-        has_images = values.get("has_images", False)
+        has_images = info.data.get("has_images", False)
         if has_images and not v:
             raise ValueError("Alt text is required when article contains images")
         return v
 
-    @validator("cta_url")
+    @field_validator("cta_url")
+    @classmethod
     def validate_cta_url_format(cls, v):
         """Validate CTA URL format."""
         if v and not v.startswith(("http://", "https://")):
