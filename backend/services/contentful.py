@@ -34,3 +34,53 @@ class ContentfulService:
                 "ctaUrl": "https://example.com/learn-more",
             },
         }
+
+    # --- MVP ActivationLog mock (JSONL-backed) ---
+    def write_activation_log(self, log_record: dict[str, Any]) -> None:
+        """
+        Mock method to write an ActivationLog entry.
+        For MVP, append to the same JSONL file used by backend audit logs.
+        Controlled by env var ACTIVATION_LOG_PATH.
+        """
+        import os
+        from pathlib import Path
+
+        try:
+            log_path = os.getenv("ACTIVATION_LOG_PATH", "activation_logs.jsonl")
+            path = Path(log_path)
+            if not path.parent.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a", encoding="utf-8") as f:
+                import json
+
+                f.write(json.dumps(log_record) + "\n")
+        except Exception:
+            # Non-fatal logging failure
+            pass
+
+    def read_latest_activation_log(self, entry_id: str) -> dict[str, Any] | None:
+        """
+        Mock method to fetch the most recent ActivationLog for an entry.
+        Scans the JSONL file from end to beginning for performance in small files.
+        """
+        import os
+        from pathlib import Path
+        import json
+
+        log_path = os.getenv("ACTIVATION_LOG_PATH", "activation_logs.jsonl")
+        path = Path(log_path)
+        if not path.exists():
+            return None
+        try:
+            # Read all lines and scan from the end (files are small in MVP)
+            lines = path.read_text(encoding="utf-8").splitlines()
+            for line in reversed(lines):
+                try:
+                    record = json.loads(line)
+                except Exception:
+                    continue
+                if record.get("entry_id") == entry_id:
+                    return record
+            return None
+        except Exception:
+            return None

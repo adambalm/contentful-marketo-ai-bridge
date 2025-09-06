@@ -70,7 +70,7 @@ class TestActivateEndpoint:
             ),
             patch("main.ai_service.enrich_content", return_value=mock_enrichment),
             patch(
-                "main.marketo_service.add_to_list",
+                "main.marketing_service.add_to_list",
                 return_value={"success": True, "leads_added": 1},
             ),
         ):
@@ -102,7 +102,7 @@ class TestActivateEndpoint:
                 "main.contentful_service.get_article", return_value=mock_article_data
             ),
             patch(
-                "main.marketo_service.add_to_list",
+                "main.marketing_service.add_to_list",
                 return_value={"success": True, "leads_added": 1},
             ),
         ):
@@ -228,7 +228,7 @@ class TestActivateEndpoint:
                 "main.ai_service.enrich_content",
                 side_effect=Exception("OpenAI API error"),
             ),
-            patch("main.marketo_service.add_to_list", return_value={"success": True}),
+            patch("main.marketing_service.add_to_list", return_value={"success": True}),
         ):
 
             response = client.post("/activate", json=valid_activation_payload)
@@ -255,7 +255,7 @@ class TestActivateEndpoint:
             ),
             patch("main.ai_service.enrich_content", return_value=mock_enrichment),
             patch(
-                "main.marketo_service.add_to_list",
+                "main.marketing_service.add_to_list",
                 side_effect=Exception("Marketo API error"),
             ),
         ):
@@ -292,7 +292,7 @@ class TestActivateEndpoint:
                     seo_score=85, suggested_meta_description="Test", keywords=["test"]
                 ),
             ),
-            patch("main.marketo_service.add_to_list", return_value={"success": True}),
+            patch("main.marketing_service.add_to_list", return_value={"success": True}),
         ):
 
             response = client.post("/activate", json=valid_activation_payload)

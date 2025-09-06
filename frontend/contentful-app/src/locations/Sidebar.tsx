@@ -23,6 +23,12 @@ interface ActivationResult {
     seo_score?: number;
     suggested_meta_description?: string;
     keywords?: string[];
+    brand_voice?: {
+      professionalism?: 'pass' | 'advisory' | 'attention';
+      confidence?: 'pass' | 'advisory' | 'attention';
+      action_orientation?: 'pass' | 'advisory' | 'attention';
+      overall?: 'pass' | 'advisory' | 'attention';
+    }
   };
   errors?: string[];
   timestamp: string;
@@ -63,6 +69,14 @@ const Sidebar = () => {
       }
 
       setLastResult(result);
+      // Also fetch latest persisted log (in case another process enriched more info)
+      try {
+        const latest = await fetch(`${backendUrl}/activation-log/${entryId}`);
+        if (latest.ok) {
+          const record = await latest.json();
+          setLastResult(record as ActivationResult);
+        }
+      } catch {}
       
       // Show success notification
       sdk.notifier.success('Content successfully activated in Marketo!');
@@ -138,22 +152,32 @@ const Sidebar = () => {
               <Stack spacing="spacingXs">
                 <Text fontWeight="fontWeightMedium">AI Enrichment Results:</Text>
                 
-                {lastResult.enrichment_data.seo_score && (
+                {lastResult.enrichment_data.seo_score != null && (
                   <Text fontSize="fontSizeS">
                     SEO Score: {lastResult.enrichment_data.seo_score}/100
                   </Text>
                 )}
                 
-                {lastResult.enrichment_data.suggested_meta_description && (
+                {lastResult.enrichment_data.suggested_meta_description != null && (
                   <Text fontSize="fontSizeS">
                     Meta Description: "{lastResult.enrichment_data.suggested_meta_description}"
                   </Text>
                 )}
                 
-                {lastResult.enrichment_data.keywords && (
+                {lastResult.enrichment_data.keywords != null && lastResult.enrichment_data.keywords.length > 0 && (
                   <Text fontSize="fontSizeS">
                     Keywords: {lastResult.enrichment_data.keywords.join(', ')}
                   </Text>
+                )}
+
+                {lastResult.enrichment_data.brand_voice && (
+                  <Stack spacing="spacing2Xs">
+                    <Text fontWeight="fontWeightMedium">Brand Voice:</Text>
+                    <Text fontSize="fontSizeS">Professionalism: {lastResult.enrichment_data.brand_voice.professionalism}</Text>
+                    <Text fontSize="fontSizeS">Confidence: {lastResult.enrichment_data.brand_voice.confidence}</Text>
+                    <Text fontSize="fontSizeS">Action Orientation: {lastResult.enrichment_data.brand_voice.action_orientation}</Text>
+                    <Text fontSize="fontSizeS">Overall: {lastResult.enrichment_data.brand_voice.overall}</Text>
+                  </Stack>
                 )}
               </Stack>
             )}

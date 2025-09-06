@@ -9,9 +9,13 @@ vi.mock('@contentful/react-apps-toolkit', () => ({
 }));
 
 describe('Sidebar component', () => {
-  it('Component text exists', () => {
+  it('renders activation UI elements', () => {
     const { getByText } = render(<Sidebar />);
 
-    expect(getByText('Hello Sidebar Component (AppId: test-app)')).toBeInTheDocument();
+    // Subheading/title
+    expect(getByText('AI Content Activation Engine')).toBeInTheDocument();
+
+    // Primary action button
+    expect(getByText('Activate in Marketo')).toBeInTheDocument();
   });
 });

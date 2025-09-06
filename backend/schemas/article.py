@@ -65,9 +65,21 @@ class ArticleIn(BaseModel):
         }
         invalid_tags = set(v) - allowed_tags
         if invalid_tags:
-            raise ValueError(
-                f"Invalid tags: {invalid_tags}. Must use controlled vocabulary: {sorted(allowed_tags)}"
-            )
+            # AI-powered suggestions using similarity
+            from difflib import get_close_matches
+            suggestions = {}
+            for invalid_tag in invalid_tags:
+                matches = get_close_matches(invalid_tag, allowed_tags, n=3, cutoff=0.6)
+                if matches:
+                    suggestions[invalid_tag] = matches
+            
+            error_msg = f"Invalid tags: {invalid_tags}."
+            if suggestions:
+                suggestion_text = ", ".join([f"'{invalid}' → {matches}" for invalid, matches in suggestions.items()])
+                error_msg += f" Suggestions: {suggestion_text}."
+            error_msg += f" Valid options: {sorted(allowed_tags)}"
+            
+            raise ValueError(error_msg)
         return v
 
     @field_validator("alt_text")

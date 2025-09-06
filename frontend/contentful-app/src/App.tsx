@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, lazy, Suspense } from 'react';
 import { locations } from '@contentful/app-sdk';
-import ConfigScreen from './locations/ConfigScreen';
-import Field from './locations/Field';
-import EntryEditor from './locations/EntryEditor';
-import Dialog from './locations/Dialog';
-import Sidebar from './locations/Sidebar';
-import Page from './locations/Page';
-import Home from './locations/Home';
+const ConfigScreen = lazy(() => import('./locations/ConfigScreen'));
+const Field = lazy(() => import('./locations/Field'));
+const EntryEditor = lazy(() => import('./locations/EntryEditor'));
+const Dialog = lazy(() => import('./locations/Dialog'));
+const Sidebar = lazy(() => import('./locations/Sidebar'));
+const Page = lazy(() => import('./locations/Page'));
+const Home = lazy(() => import('./locations/Home'));
 import { useSDK } from '@contentful/react-apps-toolkit';
+import DevDebug from './DevDebug';
 
 const ComponentLocationSettings = {
   [locations.LOCATION_APP_CONFIG]: ConfigScreen,
@@ -30,7 +31,15 @@ const App = () => {
     }
   }, [sdk.location]);
 
-  return Component ? <Component /> : null;
+  if (Component) {
+    return (
+      <Suspense fallback={null}>
+        <Component />
+      </Suspense>
+    );
+  }
+  // When not running inside Contentful, show dev-only debug view
+  return <DevDebug />;
 };
 
 export default App;

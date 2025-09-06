@@ -80,6 +80,7 @@ build/
 # Logs
 *.log
 logs
+activation_logs.jsonl
 
 # Database
 *.db

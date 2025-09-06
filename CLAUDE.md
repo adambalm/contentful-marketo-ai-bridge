@@ -29,14 +29,16 @@ For all work on this portfolio project, reference the target job description in 
 
 ## Architecture
 
-**Core Flow:** Contentful App UI → FastAPI Backend → AI Enrichment (OpenAI) → Marketo Integration + ActivationLog Evidence
+**Core Flow:** Contentful App UI → FastAPI Backend → AI Enrichment (OpenAI/Ollama) → Marketing Platform Integration + ActivationLog Evidence
 
 **Key Components:**
-- **Contentful App**: React-based sidebar UI for manual activation triggers
-- **FastAPI Backend**: Python orchestration layer with Pydantic validation
-- **ActivationLog**: Dual-purpose audit trail and future training dataset (JSONL format)
+- **Contentful App**: React-based sidebar UI for manual activation triggers (IMPLEMENTED)
+- **FastAPI Backend**: Python orchestration layer with Pydantic validation (IMPLEMENTED)
+- **Provider-Agnostic AI**: Supports both OpenAI and local Ollama models via environment switching
+- **Marketing Platform Factory**: Supports Marketo, HubSpot, and mock services
+- **Comprehensive Testing**: 23 test cases covering validation, enrichment, and integration scenarios
 - **Controlled Vocabulary**: 25+ marketing tags across content types, audiences, funnel stages
-- **Mock Services**: Development fallbacks for Marketo sandbox delays
+- **Mock Services**: Development fallbacks for external API dependencies
 
 ## Development Commands
 
@@ -53,10 +55,13 @@ black --check .                               # Check formatting
 uvicorn main:app --reload                     # Run dev server
 ```
 
-**Frontend (planned Contentful App):**
+**Frontend (Contentful App - IMPLEMENTED):**
 ```bash
-cd frontend
-npx create-contentful-app contentful-app      # Initial scaffold
+cd frontend/contentful-app
+npm install                                    # Install dependencies
+npm run dev                                    # Run development server
+npm run build                                  # Build for production
+npm test                                       # Run tests
 ```
 
 ## Data Contracts & Validation
@@ -77,7 +82,7 @@ portfolio/
 │   ├── pyproject.toml # Tool configurations (ruff, black, pytest)
 │   ├── tests/         # Test suite
 │   └── .venv/         # Python virtual environment
-├── frontend/          # Future Contentful App (currently empty)
+├── frontend/          # Contentful App (React-based, implemented)
 ├── docs/              # Technical documentation
 │   ├── PRD.md         # Product Requirements with industry statistics
 │   ├── TECH_SPEC.md   # Complete technical specification

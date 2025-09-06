@@ -29,13 +29,6 @@ const ConfigScreen = () => {
     return {
       // Parameters to be persisted as the app configuration
       parameters,
-      // Configure app to show only in sidebar location
-      targetState: {
-        EditorInterface: {
-          ...currentState?.EditorInterface,
-          sidebar: { position: 0 },
-        },
-      },
     };
   }, [parameters, sdk]);
 
