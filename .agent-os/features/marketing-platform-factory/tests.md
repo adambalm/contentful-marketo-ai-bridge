@@ -248,7 +248,7 @@ def mock_marketo_client():
             'scope': 'read write'
         }
         mock_token_response.status_code = 200
-        
+
         # Mock program creation response
         mock_program_response = MagicMock()
         mock_program_response.json.return_value = {
@@ -256,7 +256,7 @@ def mock_marketo_client():
             'result': [{'id': 1001, 'name': 'Test Program'}]
         }
         mock_program_response.status_code = 200
-        
+
         mock_post.side_effect = [mock_token_response, mock_program_response]
         yield mock_post
 ```
@@ -276,7 +276,7 @@ def mock_hubspot_client():
             'url': 'https://example.hubspot.com/blog/test-post'
         }
         mock_blog_response.status_code = 200
-        
+
         mock_post.return_value = mock_blog_response
         yield mock_post, mock_get
 ```

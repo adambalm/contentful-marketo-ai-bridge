@@ -146,7 +146,7 @@ class BrandVoiceAnalyzer:
         self.accessibility_analyzer = AccessibilityAnalyzer()
         self.action_analyzer = ActionOrientedAnalyzer()
         self.consistency_analyzer = ConsistencyAnalyzer()
-    
+
     def analyze_content(self, content: Dict, context: Dict = None) -> BrandVoiceResult:
         # Comprehensive brand voice analysis implementation
         return BrandVoiceResult(
@@ -164,14 +164,14 @@ class BrandVoiceAnalyzer:
 def activate_content(content_data: Dict) -> ActivationResult:
     # Brand voice analysis with quality gates
     brand_analysis = brand_voice_analyzer.analyze_content(enriched_content)
-    
+
     if brand_analysis.overall_status == "fail":
         return ActivationResult(
             success=False,
             error=f"Brand voice compliance failed: {brand_analysis.get_failing_categories()}",
             brand_voice_analysis=brand_analysis
         )
-    
+
     # Continue with activation if brand voice passes
 ```
 

@@ -7,13 +7,13 @@
 ## Phase 1: Contentful Space Setup (3-4 hours)
 
 ### Task 1.1: Contentful Account & Space Creation
-**Estimate**: 1 hour  
+**Estimate**: 1 hour
 **Priority**: Critical
 **Owner**: Manual setup required
 
 **Steps:**
 1. Create Contentful account (free tier sufficient for MVP)
-2. Create new space for "Marketing Content Demo"  
+2. Create new space for "Marketing Content Demo"
 3. Generate Content Management API tokens
 4. Generate Content Delivery API tokens
 5. Document space ID and tokens securely
@@ -29,7 +29,7 @@
 ```bash
 # Add to backend/.env
 CONTENTFUL_SPACE_ID=your_actual_space_id
-CONTENTFUL_ACCESS_TOKEN=your_delivery_token  
+CONTENTFUL_ACCESS_TOKEN=your_delivery_token
 CONTENTFUL_PREVIEW_TOKEN=your_preview_token
 CONTENTFUL_MANAGEMENT_TOKEN=your_management_token
 ```
@@ -42,13 +42,13 @@ CONTENTFUL_MANAGEMENT_TOKEN=your_management_token
 ```json
 {
   "name": "Marketing Article",
-  "displayField": "title", 
+  "displayField": "title",
   "description": "Marketing content for AI activation",
   "fields": [
     {"id": "title", "name": "Title", "type": "Symbol", "required": true},
     {"id": "body", "name": "Body", "type": "RichText", "required": true},
     {"id": "summary", "name": "Summary", "type": "Text", "required": false},
-    {"id": "campaignTags", "name": "Campaign Tags", "type": "Array", 
+    {"id": "campaignTags", "name": "Campaign Tags", "type": "Array",
      "items": {"type": "Symbol", "validations": [{"in": ["thought-leadership", "marketer", "awareness", "case-study", "webinar", "ebook"]}]}},
     {"id": "hasImages", "name": "Has Images", "type": "Boolean", "required": false},
     {"id": "altText", "name": "Alt Text", "type": "Text", "required": false},
@@ -74,7 +74,7 @@ CONTENTFUL_MANAGEMENT_TOKEN=your_management_token
 - [ ] Test entry created successfully
 - [ ] Content model matches Pydantic schema expectations
 
-### Task 1.3: Sample Content Population  
+### Task 1.3: Sample Content Population
 **Estimate**: 1 hour
 **Priority**: High
 
@@ -88,7 +88,7 @@ Create 5-10 sample articles with varied characteristics:
    - CTA: "Download our AI Guide"
 
 2. **Product Case Study**
-   - Title: "How Enterprise Customer Increased ROI by 300%"  
+   - Title: "How Enterprise Customer Increased ROI by 300%"
    - Campaign Tags: ["case-study", "enterprise", "consideration"]
    - Has Images: true
    - CTA: "Schedule a Demo"
@@ -122,7 +122,7 @@ python-dotenv>=0.19.0  # If not already present
 **Implementation Steps:**
 1. Update requirements.txt
 2. Install in virtual environment
-3. Test import functionality  
+3. Test import functionality
 4. Add to Docker requirements if needed
 
 **Acceptance Criteria:**
@@ -141,25 +141,25 @@ import contentful
 from typing import Any, Optional
 
 class ContentfulService:
-    def __init__(self, 
-                 space_id: str = None, 
+    def __init__(self,
+                 space_id: str = None,
                  access_token: str = None,
                  preview_token: str = None,
                  use_preview: bool = False):
         space_id = space_id or os.getenv('CONTENTFUL_SPACE_ID')
         access_token = access_token or os.getenv('CONTENTFUL_ACCESS_TOKEN')
         preview_token = preview_token or os.getenv('CONTENTFUL_PREVIEW_TOKEN')
-        
+
         if not space_id or not access_token:
             raise ValueError("Contentful credentials not configured")
-        
+
         # Use preview API for draft content, delivery API for published
         token = preview_token if use_preview else access_token
         api_url = 'preview.contentful.com' if use_preview else 'cdn.contentful.com'
-        
+
         self.client = contentful.Client(space_id, token, api_url=api_url)
         self.space_id = space_id
-    
+
     def get_article(self, entry_id: str) -> dict[str, Any]:
         """Retrieve article from Contentful CMS"""
         try:
@@ -167,42 +167,42 @@ class ContentfulService:
             return self._transform_entry(entry)
         except Exception as e:
             raise HTTPException(status_code=404, detail=f"Article not found: {entry_id}")
-    
+
     def _transform_entry(self, entry) -> dict[str, Any]:
         """Transform Contentful entry to expected format"""
         fields = {}
-        
+
         # Extract and transform fields
         fields['title'] = getattr(entry, 'title', '')
         fields['body'] = self._rich_text_to_plain(getattr(entry, 'body', ''))
         fields['summary'] = getattr(entry, 'summary', None)
         fields['campaignTags'] = getattr(entry, 'campaign_tags', [])
         fields['hasImages'] = getattr(entry, 'has_images', False)
-        fields['altText'] = getattr(entry, 'alt_text', None)  
+        fields['altText'] = getattr(entry, 'alt_text', None)
         fields['ctaText'] = getattr(entry, 'cta_text', None)
         fields['ctaUrl'] = getattr(entry, 'cta_url', None)
-        
+
         # Handle featured image asset
         featured_image = getattr(entry, 'featured_image', None)
         if featured_image:
             fields['hasImages'] = True
             if not fields['altText']:
                 fields['altText'] = getattr(featured_image, 'description', '')
-        
+
         return {
             'sys': {'id': entry.sys['id']},
             'fields': fields
         }
-    
+
     def _rich_text_to_plain(self, rich_text) -> str:
         """Convert Contentful rich text to plain text"""
         if not rich_text:
             return ""
-        
+
         # Handle both string and rich text object
         if isinstance(rich_text, str):
             return rich_text
-        
+
         # Extract text content from rich text nodes
         def extract_text(node):
             if isinstance(node, dict):
@@ -213,7 +213,7 @@ class ContentfulService:
             elif isinstance(node, list):
                 return ''.join(extract_text(child) for child in node)
             return ''
-        
+
         return extract_text(rich_text)
 ```
 
@@ -227,7 +227,7 @@ class ContentfulService:
 - [ ] Preview/published content switching
 
 ### Task 2.3: Environment Configuration
-**Estimate**: 1 hour  
+**Estimate**: 1 hour
 **Priority**: High
 
 **Configuration Management:**
@@ -271,19 +271,19 @@ else:
 class TestContentfulIntegration:
     def test_real_contentful_connection(self):
         """Test connection to actual Contentful space"""
-        
+
     def test_article_retrieval_with_real_data(self):
         """Test retrieving actual articles from Contentful"""
-        
+
     def test_rich_text_conversion(self):
         """Test rich text to plain text conversion"""
-        
+
     def test_asset_resolution(self):
         """Test image asset URL resolution"""
-        
+
     def test_missing_entry_handling(self):
         """Test 404 handling for non-existent entries"""
-        
+
     def test_field_mapping_validation(self):
         """Test all required fields map correctly"""
 ```
@@ -291,7 +291,7 @@ class TestContentfulIntegration:
 **Test Environment Setup:**
 - Create test-specific Contentful entries
 - Use environment variables for test credentials
-- Mock external dependencies appropriately  
+- Mock external dependencies appropriately
 - Ensure tests clean up after themselves
 
 **Acceptance Criteria:**
@@ -385,7 +385,7 @@ services:
     envVars:
       - key: CONTENTFUL_SPACE_ID
         sync: false  # Set manually for security
-      - key: CONTENTFUL_ACCESS_TOKEN  
+      - key: CONTENTFUL_ACCESS_TOKEN
         sync: false  # Set manually for security
 ```
 
@@ -403,7 +403,7 @@ services:
 - **Rate Limiting**: Respect API limits, implement exponential backoff
 - **Data Migration**: Backup mock data, provide fallback mechanisms
 
-### Business Risks  
+### Business Risks
 - **Demo Dependency**: Ensure stable demo environment separate from development
 - **Content Quality**: Create high-quality sample content for demonstrations
 - **Performance**: Load test with realistic content volumes

@@ -43,17 +43,17 @@ class MarketingPlatform(ABC):
     def create_campaign(self, campaign_data: Dict) -> CampaignResponse:
         """Create marketing campaign from activated content"""
         pass
-    
+
     @abstractmethod
     def publish_content(self, content_data: Dict) -> PublishResponse:
         """Publish content to marketing platform"""
         pass
-    
+
     @abstractmethod
     def upload_assets(self, assets: List[Asset]) -> AssetsResponse:
         """Upload marketing assets to platform"""
         pass
-    
+
     @abstractmethod
     def get_campaign_status(self, campaign_id: str) -> StatusResponse:
         """Retrieve campaign status and metrics"""
@@ -115,18 +115,18 @@ class MarketoService(MarketingPlatform):
         self.munchkin_id = os.getenv("MARKETO_MUNCHKIN_ID")
         self.base_url = f"https://{self.munchkin_id}.mktorest.com"
         self.access_token = None
-    
+
     def create_campaign(self, campaign_data: Dict) -> CampaignResponse:
         """Create Marketo program and associated assets"""
         # Create program
         program_data = self._map_to_program(campaign_data)
         program_response = self._api_request("POST", "/rest/asset/v1/programs.json", program_data)
-        
+
         # Create email template if needed
         if campaign_data.get("email_content"):
             email_data = self._map_to_email_template(campaign_data)
             email_response = self._api_request("POST", "/rest/asset/v1/emailTemplates.json", email_data)
-        
+
         return CampaignResponse(
             success=True,
             campaign_id=program_response["result"][0]["id"],
@@ -141,19 +141,19 @@ class HubSpotService(MarketingPlatform):
     def __init__(self):
         self.api_key = os.getenv("HUBSPOT_API_KEY")
         self.base_url = "https://api.hubapi.com"
-    
+
     def create_campaign(self, campaign_data: Dict) -> CampaignResponse:
         """Create HubSpot campaign and content"""
         # Create blog post if content type is blog
         if campaign_data.get("content_type") == "blog":
             blog_data = self._map_to_blog_post(campaign_data)
             response = self._api_request("POST", "/content/api/v2/blog-posts", blog_data)
-        
+
         # Create email campaign
         elif campaign_data.get("content_type") == "email":
             email_data = self._map_to_email_campaign(campaign_data)
             response = self._api_request("POST", "/marketing/v3/emails", email_data)
-        
+
         return CampaignResponse(
             success=True,
             campaign_id=response["id"],
@@ -168,10 +168,10 @@ class MockMarketingService(MarketingPlatform):
     def create_campaign(self, campaign_data: Dict) -> CampaignResponse:
         """Mock campaign creation with realistic response"""
         campaign_id = f"mock_campaign_{int(time.time())}"
-        
+
         # Simulate processing time
         time.sleep(0.5)
-        
+
         return CampaignResponse(
             success=True,
             campaign_id=campaign_id,
@@ -191,7 +191,7 @@ class MockMarketingService(MarketingPlatform):
 ```python
 class ContentMapper:
     """Transform activated content to platform-specific formats"""
-    
+
     def map_to_platform(self, activated_content: Dict, platform: str) -> Dict:
         """Map content to specific platform requirements"""
         if platform == "marketo":
@@ -199,7 +199,7 @@ class ContentMapper:
         elif platform == "hubspot":
             return self._map_to_hubspot(activated_content)
         return self._map_to_generic(activated_content)
-    
+
     def _map_to_marketo(self, content: Dict) -> Dict:
         """Transform content for Marketo program creation"""
         return {
@@ -210,7 +210,7 @@ class ContentMapper:
             "costs": self._calculate_program_costs(content),
             "tags": self._map_tags_to_marketo(content["campaign_tags"])
         }
-    
+
     def _map_to_hubspot(self, content: Dict) -> Dict:
         """Transform content for HubSpot campaign creation"""
         return {
@@ -239,7 +239,7 @@ class PublishResponse(BaseModel):
     platform: str
     public_url: Optional[str] = None
     error_message: Optional[str] = None
-    
+
 class AssetsResponse(BaseModel):
     success: bool
     asset_ids: List[str]
@@ -361,15 +361,15 @@ class NewPlatformService(MarketingPlatform):
     def __init__(self):
         self.api_key = os.getenv("NEWPLATFORM_API_KEY")
         self.client = NewPlatformClient(api_key=self.api_key)
-    
+
     def create_campaign(self, campaign_data: Dict) -> CampaignResponse:
         # Platform-specific campaign creation
         pass
-    
+
     def publish_content(self, content_data: Dict) -> PublishResponse:
         # Platform-specific content publishing
         pass
-    
+
     # ... implement other required methods
 
 # Factory update for new platform

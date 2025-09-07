@@ -1,0 +1,181 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  secret-detection:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for secret scanning
+
+      - name: Run TruffleHog Secret Scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified
+
+      - name: Environment File Security Check
+        run: |
+          echo "🔍 Checking .env files for security..."
+          
+          # Check that .env contains only template values
+          if [ -f "backend/.env" ]; then
+            if grep -E "^[A-Z_]+=(?!your_)[a-zA-Z0-9]" backend/.env; then
+              echo "❌ SECURITY: Found non-template values in .env file"
+              echo "All values in .env must start with 'your_' or be 'mock'"
+              exit 1
+            else
+              echo "✅ .env file contains only template values"
+            fi
+          fi
+          
+          # Check that no .env.local files are tracked
+          if git ls-files | grep -E "\.env\.local$"; then
+            echo "❌ SECURITY: .env.local files should never be committed"
+            exit 1
+          else
+            echo "✅ No .env.local files are tracked by git"
+          fi
+          
+          # Check for common secret patterns
+          echo "🔍 Scanning for hardcoded secrets..."
+          if git log --all -p | grep -E "(CFPAT-[A-Za-z0-9_-]{59}|sk-[A-Za-z0-9]{48}|AIza[A-Za-z0-9_-]{35})"; then
+            echo "❌ SECURITY: Found potential API keys in git history"
+            exit 1
+          else
+            echo "✅ No hardcoded API keys found in git history"
+          fi
+
+      - name: Check File Permissions
+        run: |
+          echo "🔍 Checking file permissions..."
+          
+          # Check for world-writable files
+          if find . -type f -perm -002 -not -path './.git/*' -not -path './node_modules/*' -not -path './.venv/*'; then
+            echo "❌ SECURITY: Found world-writable files"
+            exit 1
+          else
+            echo "✅ No world-writable files found"
+          fi
+
+      - name: Dependency Security Audit
+        run: |
+          echo "🔍 Running dependency security audit..."
+          
+          # Python dependencies
+          if [ -f "backend/requirements.txt" ]; then
+            pip install safety
+            safety check -r backend/requirements.txt
+          fi
+          
+          # Node.js dependencies
+          if [ -f "frontend/contentful-app/package.json" ]; then
+            cd frontend/contentful-app
+            npm audit --audit-level=moderate
+            cd ../..
+          fi
+
+  environment-validation:
+    name: Environment Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install python-dotenv
+
+      - name: Validate Environment Configuration
+        run: |
+          cd backend
+          python -c "
+          from pathlib import Path
+          import os
+          import sys
+          
+          # Load environment files
+          env_file = Path('.env')
+          if not env_file.exists():
+              print('❌ Missing .env file')
+              sys.exit(1)
+              
+          # Check all values are templates
+          template_patterns = ['your_', 'mock', 'localhost', 'example.com']
+          
+          with open(env_file) as f:
+              for line_num, line in enumerate(f, 1):
+                  line = line.strip()
+                  if not line or line.startswith('#'):
+                      continue
+                  if '=' not in line:
+                      continue
+                      
+                  key, value = line.split('=', 1)
+                  value = value.strip('\"').strip(\"'\")
+                  
+                  # Skip boolean and numeric values
+                  if value.lower() in ['true', 'false'] or value.isdigit():
+                      continue
+                      
+                  # Check if value looks like a template
+                  is_template = any(pattern in value.lower() for pattern in template_patterns)
+                  
+                  if not is_template and len(value) > 5:
+                      print(f'❌ Line {line_num}: {key} appears to contain real value: {value[:20]}...')
+                      sys.exit(1)
+              
+          print('✅ All environment values appear to be templates')
+          "
+
+  git-history-scan:
+    name: Git History Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan Git History for Secrets
+        run: |
+          echo "🔍 Scanning git history for accidentally committed secrets..."
+          
+          # Common secret patterns
+          PATTERNS=(
+            "CFPAT-[A-Za-z0-9_-]{59}"     # Contentful Management Token
+            "sk-[A-Za-z0-9]{48}"          # OpenAI API Key
+            "AIza[A-Za-z0-9_-]{35}"       # Google API Key
+            "[A-Za-z0-9+/]{40,}"          # Base64 encoded secrets (40+ chars)
+            "-----BEGIN [A-Z ]+ PRIVATE KEY-----"  # Private keys
+          )
+          
+          for pattern in "${PATTERNS[@]}"; do
+            echo "Checking pattern: $pattern"
+            if git log --all -p --grep="$pattern" | grep -E "$pattern"; then
+              echo "❌ SECURITY: Found potential secret matching pattern: $pattern"
+              echo "🚨 IMMEDIATE ACTION REQUIRED:"
+              echo "1. Rotate the exposed secret immediately"
+              echo "2. Run: git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch <file>' --prune-empty --tag-name-filter cat -- --all"
+              echo "3. Force push to rewrite history: git push origin --force --all"
+              exit 1
+            fi
+          done
+          
+          echo "✅ No secrets found in git history"

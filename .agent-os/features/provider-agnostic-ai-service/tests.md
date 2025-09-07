@@ -111,7 +111,7 @@ This is the test coverage for Provider-Agnostic AI Service detailed in @.agent-o
 
 #### Runtime Provider Changes
 - [x] **test_provider_switching_openai_to_mock** - Switch from OpenAI to mock provider
-- [x] **test_provider_switching_mock_to_local** - Switch from mock to local provider  
+- [x] **test_provider_switching_mock_to_local** - Switch from mock to local provider
 - [x] **test_provider_switching_environment_change** - Dynamic environment variable changes
 - [x] **test_provider_switching_no_restart_required** - Runtime changes without restart
 
@@ -193,13 +193,13 @@ def mock_openai_client():
     with patch('openai.OpenAI') as mock_client:
         mock_instance = MagicMock()
         mock_client.return_value = mock_instance
-        
+
         # Mock successful text completion
         mock_response = MagicMock()
         mock_response.choices = [MagicMock()]
         mock_response.choices[0].message.content = "Mock generated content"
         mock_instance.chat.completions.create.return_value = mock_response
-        
+
         yield mock_instance
 
 @pytest.fixture

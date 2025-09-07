@@ -70,12 +70,15 @@ public
 # React
 build/
 
-# Environment variables
-.env
+# Environment variables - CRITICAL SECURITY
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+*.env.local
+**/secrets.json
+**/*_secrets.*
+**/*_credentials.*
 
 # Logs
 *.log
@@ -104,3 +107,23 @@ htmlcov/
 
 # Job description (private)
 JD.md
+
+# Security - Never commit these files with secrets
+contentful_auth_info.json
+test_image.b64
+*.b64
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Auth and config files that may contain secrets
+playwright_auth/
+auth_state.json
+*_auth_*.json
+*_state.json
+
+# Test artifacts that may contain sensitive data
+marketing_dashboard.png
+content_strategy.png
+analytics_chart.png

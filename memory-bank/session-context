@@ -25,7 +25,7 @@ Just completed a major development session implementing the core FastAPI backend
 - FastAPI backend with /activate endpoint
 - Pydantic schemas with validation
 - AI service supporting OpenAI and Ollama
-- Mock integrations for Contentful and Marketo  
+- Mock integrations for Contentful and Marketo
 - Comprehensive test suite
 - Pre-commit quality automation
 

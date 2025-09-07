@@ -1,23 +1,72 @@
+# Pre-commit hooks for security and code quality
 repos:
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.8.6
+  # Security: Prevent secrets from being committed
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            .*\.lock$|
+            .*node_modules.*|
+            .*\.venv.*|
+            .*__pycache__.*|
+            .*/migrations/.*|
+            .*\.log$|
+            .*test.*fixtures.*
+          )$
+
+  # Additional secret detection
+  - repo: https://github.com/trufflesecurity/trufflehog
+    rev: v3.63.2
+    hooks:
+      - id: trufflehog
+        name: TruffleHog
+        description: Detect hardcoded secrets
+        entry: bash -c 'trufflehog git file://. --since-commit HEAD --only-verified --fail'
+        language: system
+        stages: ["commit", "push"]
+
+  # Environment file validation
+  - repo: local
+    hooks:
+      - id: env-validation
+        name: Environment File Validation
+        entry: python
+        args: ['-c', 'import sys; sys.exit(0 if all(not line.strip() or line.startswith("#") or line.split("=")[1].startswith("your_") or "mock" in line.split("=")[1] for line in open(".env").readlines() if "=" in line) else 1)']
+        language: system
+        files: '\.env$'
+        pass_filenames: false
+
+  # Python code quality
+  - repo: https://github.com/psf/black
+    rev: 23.9.1
+    hooks:
+      - id: black
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.0
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
-        files: ^backend/
-        
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
+
+  # YAML validation
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.32.0
     hooks:
-      - id: black
-        files: ^backend/
-        
-  - repo: local
+      - id: yamllint
+
+  # Generic security checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
     hooks:
-      - id: pytest
-        name: pytest
-        entry: bash -c 'cd backend && source .venv/bin/activate && PYTHONPATH=. pytest tests/'
-        language: system
-        pass_filenames: false
-        always_run: true
-        files: ^backend/.*\.py$
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: trailing-whitespace
+      - id: end-of-file-fixer

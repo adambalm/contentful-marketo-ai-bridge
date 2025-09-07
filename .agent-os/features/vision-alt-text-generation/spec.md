@@ -73,15 +73,15 @@ Add automated alt text generation for images using vision-capable AI models (GPT
 class VisionService:
     def __init__(self, provider: str = "openai"):
         self.provider = provider
-        
+
     async def generate_alt_text(
-        self, 
-        image_url: str, 
+        self,
+        image_url: str,
         context: Dict[str, Any]
     ) -> str:
         """Generate alt text for image with article context."""
         pass
-        
+
     def validate_alt_text(self, alt_text: str) -> bool:
         """Validate alt text meets accessibility standards."""
         pass
@@ -112,7 +112,7 @@ def generate_alt_text_openai(image_url: str, context: dict) -> str:
 
 **Qwen 2.5VL Local Setup**
 ```python
-# Ollama local model integration  
+# Ollama local model integration
 import ollama
 
 def generate_alt_text_local(image_url: str, context: dict) -> str:

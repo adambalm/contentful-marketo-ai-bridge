@@ -22,7 +22,7 @@
 
 ### AI Provider Architecture
 - Successfully integrated both OpenAI and Ollama providers
-- Tested with real local models: llama3.2:latest, qwen2.5-coder, deepseek-r1  
+- Tested with real local models: llama3.2:latest, qwen2.5-coder, deepseek-r1
 - Environment-based provider switching working correctly
 - Sub-second response times for content enrichment
 
@@ -40,7 +40,7 @@
 
 ## Key Files Created This Session
 - `/backend/schemas/` - Complete Pydantic model definitions
-- `/backend/services/ai_service.py` - Provider-agnostic AI integration  
+- `/backend/services/ai_service.py` - Provider-agnostic AI integration
 - `/backend/main.py` - FastAPI application with /activate endpoint
 - `/backend/tests/` - Comprehensive test coverage
 - `.pre-commit-config.yaml` - Automated quality gates

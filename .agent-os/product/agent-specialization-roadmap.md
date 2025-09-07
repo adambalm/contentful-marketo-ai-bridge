@@ -6,20 +6,20 @@ As the AI Content Activation Engine evolves from a focused portfolio project to 
 
 ## Current State: Single Agent Approach
 
-**Status**: All tasks handled by general-purpose development agent  
-**Complexity**: 6 core components, ~700 lines of functional code  
+**Status**: All tasks handled by general-purpose development agent
+**Complexity**: 6 core components, ~700 lines of functional code
 **Rationale**: System small enough for manual coordination and unified approach
 
 ### What Works Now
 - Single developer can understand entire system
-- Task coordination is trivial  
+- Task coordination is trivial
 - No specialized domain knowledge required
 - Clear critical path (Contentful integration → Vision → Marketing platforms)
 
 ## Phase 1: Immediate Specialization (0-2 months)
 
-**Trigger**: Contentful integration begins, external API complexity increases  
-**Component Count**: 6-10 components  
+**Trigger**: Contentful integration begins, external API complexity increases
+**Component Count**: 6-10 components
 **Codebase Size**: 1,000-3,000 lines
 
 ### Recommended Specialized Agents
@@ -28,12 +28,12 @@ As the AI Content Activation Engine evolves from a focused portfolio project to 
 - **Purpose**: Retrieves and processes documentation from external APIs
 - **Use Cases**:
   - Contentful API documentation analysis
-  - OpenAI Vision API integration guides  
+  - OpenAI Vision API integration guides
   - Marketo/HubSpot API endpoint discovery
 - **Why Specialized**: Reduces context pollution in main development sessions
 - **Agent OS Integration**: `Task(subagent_type="context-fetcher")`
 
-#### 2. **test-runner** Agent (Available Now)  
+#### 2. **test-runner** Agent (Available Now)
 - **Purpose**: Executes and analyzes test failures without making fixes
 - **Use Cases**:
   - Validate mock → real service transitions
@@ -51,21 +51,21 @@ def implement_contentful_integration():
         subagent_type="context-fetcher",
         prompt="Research Contentful SDK integration patterns for FastAPI"
     )
-    
-    # 2. Implementation phase  
+
+    # 2. Implementation phase
     implementation = general_purpose_agent.implement_based_on_docs(docs)
-    
+
     # 3. Validation phase
     test_results = Task(
-        subagent_type="test-runner", 
+        subagent_type="test-runner",
         prompt="Execute integration tests and analyze failures"
     )
 ```
 
 ## Phase 2: Domain Specialization (2-6 months)
 
-**Trigger**: Multiple external integrations, vision processing complexity  
-**Component Count**: 10-20 components  
+**Trigger**: Multiple external integrations, vision processing complexity
+**Component Count**: 10-20 components
 **Codebase Size**: 3,000-8,000 lines
 
 ### Advanced Specialized Agents
@@ -78,7 +78,7 @@ def implement_contentful_integration():
   - Alt text quality assessment and validation
   - Image preprocessing and format handling
 - **Why Needed**: Vision models require specialized prompting and error handling
-- **Component Mapping**: 
+- **Component Mapping**:
   - 🟢 **Leaf Node**: Image preprocessing utilities (autonomous development)
   - 🟡 **Business Logic**: Alt text generation pipeline (TDD approach)
   - 🔴 **Core Node**: Vision model integration (careful oversight required)
@@ -87,16 +87,16 @@ def implement_contentful_integration():
 - **Purpose**: Handle external API integrations and authentication complexities
 - **Responsibilities**:
   - Marketo REST API implementation and testing
-  - HubSpot API integration and webhook handling  
+  - HubSpot API integration and webhook handling
   - OAuth 2.0 and API key management
   - Rate limiting and retry logic implementation
 - **Why Needed**: Each marketing platform has unique API patterns and gotchas
 - **Component Mapping**:
-  - 🟢 **Leaf Node**: API client utilities (autonomous development) 
+  - 🟢 **Leaf Node**: API client utilities (autonomous development)
   - 🟡 **Business Logic**: Platform-specific integrations (TDD approach)
   - 🔴 **Core Node**: Authentication flows (careful oversight required)
 
-#### 5. **Content Management Specialist** (Custom Development Required)  
+#### 5. **Content Management Specialist** (Custom Development Required)
 - **Purpose**: Handle CMS integration and content modeling complexities
 - **Responsibilities**:
   - Contentful content model design and evolution
@@ -106,7 +106,7 @@ def implement_contentful_integration():
 - **Why Needed**: CMS integrations involve complex data transformations
 - **Component Mapping**:
   - 🟢 **Leaf Node**: Field mapping utilities (autonomous development)
-  - 🟡 **Business Logic**: Content transformation (TDD approach) 
+  - 🟡 **Business Logic**: Content transformation (TDD approach)
   - 🔴 **Core Node**: Schema migration logic (careful oversight required)
 
 ### Agent Coordination Patterns
@@ -115,17 +115,17 @@ def implement_contentful_integration():
 def implement_vision_alt_text():
     # Content specialist handles data flow
     content_requirements = content_specialist.analyze_image_fields()
-    
+
     # Vision specialist handles AI processing
     vision_implementation = vision_specialist.implement_alt_text_generation(
         requirements=content_requirements
     )
-    
+
     # API specialist handles integration points
     api_integration = api_specialist.integrate_vision_endpoints(
         vision_service=vision_implementation
     )
-    
+
     # Test runner validates entire pipeline
     validation = Task(
         subagent_type="test-runner",
@@ -135,8 +135,8 @@ def implement_vision_alt_text():
 
 ## Phase 3: Adaptive Workflow Integration (6+ months)
 
-**Trigger**: 20+ components, complex interdependencies, team scaling  
-**Component Count**: 20+ components  
+**Trigger**: 20+ components, complex interdependencies, team scaling
+**Component Count**: 20+ components
 **Codebase Size**: 8,000+ lines
 
 ### Enhanced Adaptive Workflow Features
@@ -150,7 +150,7 @@ def implement_vision_alt_text():
 - `validators/url_validator.py` - Pure functions, autonomous development
 - `formatters/json_logger.py` - Self-contained utilities
 
-### 🟡 Business Logic Nodes (Standard TDD)  
+### 🟡 Business Logic Nodes (Standard TDD)
 - `services/alt_text_generator.py` - Standard complexity, TDD approach
 - `integrations/marketo_client.py` - Business logic, comprehensive tests
 - `workflows/activation_pipeline.py` - Core business flow
@@ -165,7 +165,7 @@ def implement_vision_alt_text():
 ```python
 def adaptive_task_delegation(component_path, task_type):
     classification = dependency_analyzer.classify_component(component_path)
-    
+
     if classification == "leaf_node":
         return Task(
             subagent_type="autonomous-developer",
@@ -174,14 +174,14 @@ def adaptive_task_delegation(component_path, task_type):
         )
     elif classification == "core_node":
         return Task(
-            subagent_type="careful-specialist", 
+            subagent_type="careful-specialist",
             strategy="comprehensive_testing",
             oversight="human_review_required"
         )
     else:  # business_logic_node
         return Task(
             subagent_type="tdd-specialist",
-            strategy="test_driven_development", 
+            strategy="test_driven_development",
             oversight="standard"
         )
 ```
@@ -200,7 +200,7 @@ def adaptive_task_delegation(component_path, task_type):
 - [x] Document specialization roadmap
 - [ ] Begin using context-fetcher for Contentful integration research
 
-### Phase 1 (0-2 months) 
+### Phase 1 (0-2 months)
 - [ ] Implement Contentful integration using context-fetcher + test-runner
 - [ ] Measure agent specialization effectiveness vs. general approach
 - [ ] Document lessons learned and refine agent coordination
@@ -224,7 +224,7 @@ def adaptive_task_delegation(component_path, task_type):
 - **Code Quality**: Defect rate and test coverage with agent specialization
 - **Context Efficiency**: Reduction in irrelevant context during development sessions
 
-### Phase 2 Metrics  
+### Phase 2 Metrics
 - **Domain Expertise**: Specialist agents' success rate on complex domain tasks
 - **Integration Success**: First-time success rate for external API integrations
 - **Error Reduction**: Fewer integration bugs with specialized error handling
@@ -241,13 +241,13 @@ def adaptive_task_delegation(component_path, task_type):
 - **Mitigation**: Regular cross-training sessions, shared context repository
 - **Monitoring**: Track agent knowledge overlap and system understanding
 
-### Coordination Overhead Risk  
+### Coordination Overhead Risk
 - **Problem**: Agent coordination takes longer than single-agent development
 - **Mitigation**: Implement agent coordination patterns, measure overhead
 - **Threshold**: If coordination overhead > 20%, revert to general approach
 
 ### Complexity Creep Risk
-- **Problem**: Specialization adds unnecessary complexity for simple tasks  
+- **Problem**: Specialization adds unnecessary complexity for simple tasks
 - **Mitigation**: Maintain clear triggers for specialization introduction
 - **Rule**: Only introduce specialization when task complexity justifies overhead
 
@@ -264,7 +264,7 @@ The specialization roadmap builds on the current Agent OS structure:
 └── instructions/          # Future: Enhanced with adaptive patterns
     └── adaptive/          # Future: Adaptive workflow instructions
         ├── classify-components.md
-        ├── delegate-tasks.md  
+        ├── delegate-tasks.md
         └── coordinate-agents.md
 ```
 

@@ -2,9 +2,9 @@
 
 ## ADR-001: Provider-Agnostic AI Architecture
 
-**Date**: 2024-09-05  
-**Status**: Accepted  
-**Context**: Need for flexible AI provider integration without vendor lock-in  
+**Date**: 2024-09-05
+**Status**: Accepted
+**Context**: Need for flexible AI provider integration without vendor lock-in
 
 ### Decision
 Implement AI service factory pattern supporting multiple providers (OpenAI, Ollama) with environment-based switching.
@@ -36,9 +36,9 @@ class AIService:
 
 ## ADR-002: JSONL Audit Logging as Dual-Use Training Dataset
 
-**Date**: 2024-09-04  
-**Status**: Accepted  
-**Context**: Need for audit compliance AND future AI fine-tuning capability  
+**Date**: 2024-09-04
+**Status**: Accepted
+**Context**: Need for audit compliance AND future AI fine-tuning capability
 
 ### Decision
 Structure ActivationLog as JSONL format designed for both audit compliance and machine learning training data.
@@ -55,7 +55,7 @@ class ActivationResult(BaseModel):
     activation_id: str
     timestamp: datetime
     validation_results: dict
-    ai_enrichment: dict  
+    ai_enrichment: dict
     brand_voice_analysis: dict
     platform_response: dict
 ```
@@ -71,9 +71,9 @@ class ActivationResult(BaseModel):
 
 ## ADR-003: Pydantic Data Contracts Over Runtime Validation
 
-**Date**: 2024-09-03  
-**Status**: Accepted  
-**Context**: Need for robust data validation beyond Contentful's type system  
+**Date**: 2024-09-03
+**Status**: Accepted
+**Context**: Need for robust data validation beyond Contentful's type system
 
 ### Decision
 Use Pydantic v2 models as "data contracts" ensuring semantic validation of marketing-specific rules.
@@ -88,7 +88,7 @@ Use Pydantic v2 models as "data contracts" ensuring semantic validation of marke
 ```python
 class ArticleIn(BaseModel):
     campaign_tags: List[str] = Field(..., min_items=1)
-    
+
     @validator('campaign_tags')
     def validate_controlled_vocabulary(cls, v):
         allowed_tags = {...}  # 25+ marketing tags
@@ -109,9 +109,9 @@ class ArticleIn(BaseModel):
 
 ## ADR-004: Marketing Platform Factory Pattern
 
-**Date**: 2024-09-02  
-**Status**: Accepted  
-**Context**: Support for multiple marketing automation platforms with unified interface  
+**Date**: 2024-09-02
+**Status**: Accepted
+**Context**: Support for multiple marketing automation platforms with unified interface
 
 ### Decision
 Implement factory pattern for marketing platforms (Marketo, HubSpot, Mock) with environment-based selection.
@@ -146,9 +146,9 @@ class MarketingPlatformFactory:
 
 ## ADR-005: Portfolio-Focused Mock Services Over Live Integration
 
-**Date**: 2024-09-06 (Lanesborough Protocol Decision)  
-**Status**: Accepted  
-**Context**: Balancing demonstration capability with cost/risk management for portfolio project  
+**Date**: 2024-09-06 (Lanesborough Protocol Decision)
+**Status**: Accepted
+**Context**: Balancing demonstration capability with cost/risk management for portfolio project
 
 ### Decision
 Prioritize comprehensive mock services and documentation over live API integration for portfolio demonstration.
@@ -183,9 +183,9 @@ Prioritize comprehensive mock services and documentation over live API integrati
 
 ## ADR-006: Comprehensive Testing Strategy
 
-**Date**: 2024-09-01  
-**Status**: Accepted  
-**Context**: Professional software development requires robust testing coverage  
+**Date**: 2024-09-01
+**Status**: Accepted
+**Context**: Professional software development requires robust testing coverage
 
 ### Decision
 Implement comprehensive testing with external dependency mocking and 100% core business logic coverage.
@@ -213,9 +213,9 @@ Implement comprehensive testing with external dependency mocking and 100% core b
 
 ## ADR-007: Pre-commit Quality Gates
 
-**Date**: 2024-08-30  
-**Status**: Accepted  
-**Context**: Consistent code quality and formatting across all commits  
+**Date**: 2024-08-30
+**Status**: Accepted
+**Context**: Consistent code quality and formatting across all commits
 
 ### Decision
 Implement automated pre-commit hooks for formatting (Black), linting (Ruff), and type checking.
@@ -264,9 +264,9 @@ repos:
 
 ## ADR-008: Vision Model Integration for Accessibility Compliance
 
-**Date**: 2024-09-06  
-**Status**: Accepted  
-**Context**: Need for automated alt text generation to address accessibility compliance gaps  
+**Date**: 2024-09-06
+**Status**: Accepted
+**Context**: Need for automated alt text generation to address accessibility compliance gaps
 
 ### Decision
 Integrate vision models for automated alt text generation: OpenAI gpt-4o for production, Qwen 2.5VL 7b for local development.

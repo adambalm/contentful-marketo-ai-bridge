@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **MANDATORY:** Every time Claude Code establishes new context or boots up in this repository, you MUST:
 
 1. Read `JD.md` immediately to understand the target role context
-2. Read `lanesborough/lanesborough_protocol.md` immediately  
+2. Read `lanesborough/lanesborough_protocol.md` immediately
 3. Output exactly: "LP protocol established"
 4. Only then proceed with user requests
 
@@ -111,6 +111,26 @@ portfolio/
 - **Enterprise Mindset**: Mock services for external dependencies, graceful degradation
 - **Future-Ready**: ActivationLog designed as training data for eventual SFT pipeline
 - **Undersell/Overdeliver**: Professional tone, avoid marketing hype, demonstrate actual capabilities
+
+## Critical Security Safeguards
+
+**UTF-16 Surrogate Protection**: All binary data handling MUST use file-first approach to prevent JSON corruption:
+
+```python
+# ✅ CORRECT: File-first binary handling
+from services.validation_utils import pre_flight_api_validation, validate_file_path_for_binaries
+
+# Validate all API payloads before transmission
+pre_flight_api_validation(payload, "api_endpoint_name")
+
+# Use file paths instead of base64 embedding for images
+file_path = validate_file_path_for_binaries(image_path)
+# Process via file path, not base64 in JSON
+```
+
+**NEVER embed binary data in JSON payloads**. This prevents unpaired UTF-16 surrogates that cause API 400 errors and system instability requiring server reboot.
+
+**Implementation**: `backend/services/validation_utils.py` contains comprehensive surrogate detection and prevention utilities with 22 validation tests.
 
 ---
 

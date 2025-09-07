@@ -1,9 +1,9 @@
 import { useCallback, useState, useEffect } from 'react';
 import { ConfigAppSDK } from '@contentful/app-sdk';
-import { 
-  Heading, 
-  Form, 
-  Paragraph, 
+import {
+  Heading,
+  Form,
+  Paragraph,
   Flex,
   TextInput,
   FormControl,

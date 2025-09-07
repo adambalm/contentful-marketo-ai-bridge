@@ -5,7 +5,7 @@ A Contentful sidebar application that enables one-click content activation with 
 ## Features
 
 - **One-Click Activation**: Activate content in Marketo directly from Contentful's sidebar
-- **AI Enrichment**: Automatic SEO optimization with meta descriptions and keyword generation  
+- **AI Enrichment**: Automatic SEO optimization with meta descriptions and keyword generation
 - **Real-time Status**: Live feedback with processing times and enrichment results
 - **Error Handling**: Graceful error handling with user-friendly notifications
 - **Audit Trail**: Complete tracking of activation results and AI outputs
@@ -53,7 +53,7 @@ Read [here](https://www.contentful.com/developers/docs/extensibility/app-framewo
 
 #### `npm run upload-ci`
 
-Similar to `npm run upload` it will upload your app to contentful and activate it. The only difference is  
+Similar to `npm run upload` it will upload your app to contentful and activate it. The only difference is
 that with this command all required arguments are read from the environment variables, for example when you add
 the upload command to your CI pipeline.
 

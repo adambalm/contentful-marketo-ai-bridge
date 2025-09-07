@@ -127,7 +127,7 @@ def mock_openai_vision_response():
         }]
     }
 
-@pytest.fixture  
+@pytest.fixture
 def mock_openai_vision_error():
     return openai.APIError("Rate limit exceeded", response=None, body=None)
 ```

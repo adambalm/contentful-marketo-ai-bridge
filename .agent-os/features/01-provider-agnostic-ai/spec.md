@@ -2,7 +2,7 @@
 
 ## Implementation Status: PARTIALLY IMPLEMENTED ✅❌
 
-**What Works:** OpenAI GPT-4o-mini integration, Ollama local provider, basic content enrichment  
+**What Works:** OpenAI GPT-4o-mini integration, Ollama local provider, basic content enrichment
 **What's Missing:** Vision model capabilities, advanced AI features
 
 ## Overview
@@ -38,7 +38,7 @@ AIService → AIProvider (Abstract) → {OpenAIProvider, LocalModelProvider}
 # schemas/enrichment.py
 class AIEnrichmentPayload(BaseModel):
     seo_score: int
-    readability_score: int  
+    readability_score: int
     suggested_meta_description: str
     keywords: List[str]
     keyword_density: Dict[str, float]
@@ -95,6 +95,6 @@ class AIEnrichmentPayload(BaseModel):
 - **Rate Limiting**: Client IP-based throttling
 
 ### Target Performance (Vision Integration)
-- **Image Processing**: <10 seconds for alt text generation  
+- **Image Processing**: <10 seconds for alt text generation
 - **Concurrent Requests**: Support 5+ simultaneous vision requests
 - **Cache Hit Rate**: >80% for repeated image processing

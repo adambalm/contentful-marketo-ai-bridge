@@ -1,7 +1,7 @@
 # Artifact 1 · Master Project Checklist (Merged 14-Day Sprint)
 
-> Scope: **Phase 1 (MVP)** — Contentful App (manual trigger) → FastAPI → Marketo  
-> Repo structure assumed: monorepo with `/backend` (FastAPI) and `/frontend/contentful-app` (Contentful App).  
+> Scope: **Phase 1 (MVP)** — Contentful App (manual trigger) → FastAPI → Marketo
+> Repo structure assumed: monorepo with `/backend` (FastAPI) and `/frontend/contentful-app` (Contentful App).
 > Prereqs: Root `.env.template`, root `README.md`, Contentful sandbox space.
 
 ---
@@ -22,7 +22,7 @@
 - [ ] Commit: `feat(backend): initialize FastAPI and code quality tooling`.
 
 ### Day 3: Frontend Foundation & Contentful Models
-- [ ] In `/frontend`, scaffold Contentful App:  
+- [ ] In `/frontend`, scaffold Contentful App:
   `npx create-contentful-app contentful-app`
 - [ ] Add **eslint** + **prettier** to `/frontend/contentful-app`.
 - [ ] In Contentful, create models:

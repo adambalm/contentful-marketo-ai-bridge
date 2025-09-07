@@ -75,7 +75,7 @@ This is the tests coverage details for the spec detailed in @.agent-os/features/
 
 **Environment Variable Tests**
 - `test_required_environment_variables()` - Error when required vars missing
-- `test_optional_environment_variables()` - Defaults work when optional vars missing  
+- `test_optional_environment_variables()` - Defaults work when optional vars missing
 - `test_environment_variable_validation()` - Invalid values rejected with clear errors
 - `test_space_id_format_validation()` - Valid Contentful space ID format
 
@@ -94,7 +94,7 @@ def use_real_contentful():
     """Use real Contentful API when CONTENTFUL_TEST_SPACE_ID is set."""
     return os.getenv("CONTENTFUL_TEST_SPACE_ID") is not None
 
-@pytest.fixture  
+@pytest.fixture
 def contentful_service(use_real_contentful):
     """Return real or mock service based on environment."""
     if use_real_contentful:
@@ -140,7 +140,7 @@ def mock_contentful_article_response():
 def mock_contentful_errors():
     return {
         "not_found": contentful.errors.NotFoundError("Entry not found"),
-        "unauthorized": contentful.errors.UnauthorizedError("Invalid token"), 
+        "unauthorized": contentful.errors.UnauthorizedError("Invalid token"),
         "rate_limited": contentful.errors.RateLimitExceededError("Rate limit exceeded"),
         "network_error": requests.exceptions.ConnectionError("Network unreachable")
     }
@@ -154,7 +154,7 @@ def mock_contentful_errors():
 def create_test_article(contentful_service, article_data):
     """Create test article for integration testing."""
     return contentful_service.management_client.entries(
-        contentful_service.space_id, 
+        contentful_service.space_id,
         contentful_service.environment
     ).create(None, {
         'content_type_id': 'article',
@@ -188,7 +188,7 @@ CONTENTFUL_TEST_ENVIRONMENT=testing
 
 ### Response Time Targets
 - **Article Retrieval**: p95 < 500ms including network round trip
-- **ActivationLog Creation**: p95 < 1000ms including content creation 
+- **ActivationLog Creation**: p95 < 1000ms including content creation
 - **Latest Log Retrieval**: p95 < 300ms with efficient querying
 - **Configuration Validation**: < 100ms on application startup
 
@@ -208,7 +208,7 @@ CONTENTFUL_TEST_ENVIRONMENT=testing
 
 ### Functional Success
 - [ ] 100% of real Contentful operations complete successfully in test environment
-- [ ] All ActivationLogs visible in Contentful web UI after creation  
+- [ ] All ActivationLogs visible in Contentful web UI after creation
 - [ ] Graceful degradation maintains activation functionality when Contentful down
 - [ ] Field mapping maintains 100% accuracy between API and application schemas
 
@@ -218,7 +218,7 @@ CONTENTFUL_TEST_ENVIRONMENT=testing
 - [ ] Zero degradation in existing activation performance
 - [ ] Memory usage stable during extended operation
 
-### Integration Success  
+### Integration Success
 - [ ] All 23 existing backend tests continue passing
 - [ ] New integration tests achieve 90%+ coverage on Contentful service
 - [ ] End-to-end workflow completes in under 5 seconds total

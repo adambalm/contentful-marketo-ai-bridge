@@ -2,7 +2,7 @@
 
 ## Implementation Status: NOT IMPLEMENTED ❌
 
-**Current Reality:** No vision capabilities exist. Alt text field validation only.  
+**Current Reality:** No vision capabilities exist. Alt text field validation only.
 **Industry Gap:** 26% of websites lack proper alt text for accessibility compliance.
 
 ## Problem Statement
@@ -25,7 +25,7 @@ Image Upload → Vision Model → Alt Text Generation → Quality Validation →
 - **Output**: Contextual alt text descriptions
 - **Context**: Article title and body for relevant descriptions
 
-#### Local Provider: Qwen 2.5VL 7b ❌  
+#### Local Provider: Qwen 2.5VL 7b ❌
 - **Model**: Qwen 2.5 Vision-Language 7b parameter model
 - **Deployment**: Via Ollama local infrastructure
 - **Performance**: Suitable for development and cost-conscious production
@@ -39,7 +39,7 @@ Image Upload → Vision Model → Alt Text Generation → Quality Validation →
 async def upload_image(file: UploadFile) -> ImageUploadResponse:
     """Accept image uploads for alt text generation"""
 
-@app.post("/generate-alt-text") 
+@app.post("/generate-alt-text")
 async def generate_alt_text(payload: AltTextRequest) -> AltTextResponse:
     """Generate alt text from image and article context"""
 ```
@@ -50,7 +50,7 @@ class ArticleIn(BaseModel):
     # Current implementation has these fields:
     has_images: bool = Field(False)           # ✅ EXISTS
     alt_text: str | None = Field(None)        # ✅ EXISTS (validation only)
-    
+
     # Needs addition:
     image_urls: List[str] = Field([])         # ❌ MISSING
     generated_alt_texts: List[str] = Field([]) # ❌ MISSING
@@ -115,7 +115,7 @@ class ArticleIn(BaseModel):
 
 ### Response Time Targets
 - **OpenAI Vision**: <10 seconds per image
-- **Qwen 2.5VL Local**: <15 seconds per image  
+- **Qwen 2.5VL Local**: <15 seconds per image
 - **Batch Processing**: 50+ images per hour
 
 ### Quality Metrics
@@ -130,7 +130,7 @@ class ArticleIn(BaseModel):
 ```python
 # backend/schemas/article.py:87-92
 @field_validator("alt_text")
-@classmethod  
+@classmethod
 def validate_alt_text_when_images_present(cls, v, info):
     has_images = info.data.get("has_images", False)
     if has_images and not v:
@@ -165,7 +165,7 @@ def validate_alt_text_when_images_present(cls, v, info):
 - **Measurement**: 100% alt text coverage for image-containing articles
 - **Compliance**: WCAG 2.1 AA standard adherence
 
-### Operational Efficiency  
+### Operational Efficiency
 - **Time Savings**: Reduce manual alt text creation from 2-3 minutes to <10 seconds
 - **Consistency**: 95% brand voice compliance across generated descriptions
 - **Accuracy**: <5% manual override rate for generated alt text

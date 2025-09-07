@@ -13,4 +13,3 @@ services:
         value: mock
       - key: ACTIVATION_LOG_PATH
         value: /var/log/activation_logs.jsonl
-

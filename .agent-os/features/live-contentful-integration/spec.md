@@ -18,11 +18,11 @@ Replace the mock ContentfulService with real Contentful Management and Delivery 
 
 ### ActivationLog Content Type
 - **Requirement**: Create ActivationLog entries as actual Contentful entries
-- **Fields**: 
+- **Fields**:
   - `article_reference` (Reference to original article)
   - `activation_timestamp` (DateTime)
   - `ai_outputs` (JSON object)
-  - `validation_results` (JSON object) 
+  - `validation_results` (JSON object)
   - `marketo_response` (JSON object)
   - `status` (Select: draft, processing, completed, failed)
   - `brand_voice_analysis` (JSON object)
@@ -58,7 +58,7 @@ Replace the mock ContentfulService with real Contentful Management and Delivery 
   - Implement real `write_activation_log()` creating Contentful entries
   - Add `create_activation_log_content_type()` setup method
 
-- **File**: `backend/main.py`  
+- **File**: `backend/main.py`
   - Update error handling for real Contentful failures
   - Add configuration validation on startup
   - Implement retry logic for API timeouts
@@ -93,13 +93,13 @@ CONTENTFUL_ENVIRONMENT=master
 - **Rate Limiting**: Contentful enforces strict rate limits - could impact activation performance
 - **Content Model Dependency**: Changes to Contentful content models could break integration
 
-### Medium Risk  
+### Medium Risk
 - **Network Reliability**: API failures could impact activation workflow
 - **Field Mapping**: Different field configurations across Contentful spaces
 - **Environment Consistency**: Differences between development and production spaces
 
 ### Mitigation Strategies
-- **Graceful Degradation**: Continue with JSONL logging when Contentful unavailable  
+- **Graceful Degradation**: Continue with JSONL logging when Contentful unavailable
 - **Configuration Validation**: Startup checks for required tokens and space access
 - **Field Validation**: Robust mapping with clear error messages for missing fields
 - **Rate Limit Handling**: Exponential backoff and request queuing

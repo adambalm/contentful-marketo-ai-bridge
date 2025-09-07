@@ -125,11 +125,11 @@ class MarketingPlatform(ABC):
     @abstractmethod
     def create_campaign(self, campaign_data: Dict) -> CampaignResponse:
         pass
-    
+
     @abstractmethod
     def publish_content(self, content_data: Dict) -> PublishResponse:
         pass
-    
+
     @abstractmethod
     def upload_assets(self, assets: List[Asset]) -> AssetsResponse:
         pass

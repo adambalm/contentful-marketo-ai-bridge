@@ -49,7 +49,7 @@ const Sidebar = () => {
 
     try {
       const entryId = sdk.entry.getSys().id;
-      
+
       const response = await fetch(`${backendUrl}/activate`, {
         method: 'POST',
         headers: {
@@ -63,7 +63,7 @@ const Sidebar = () => {
       });
 
       const result: ActivationResult = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(result.errors?.join(', ') || 'Activation failed');
       }
@@ -77,7 +77,7 @@ const Sidebar = () => {
           setLastResult(record as ActivationResult);
         }
       } catch {}
-      
+
       // Show success notification
       sdk.notifier.success('Content successfully activated in Marketo!');
 
@@ -141,9 +141,9 @@ const Sidebar = () => {
                 {lastResult.status}
               </Badge>
             </Flex>
-            
+
             <Text fontSize="fontSizeS" fontColor="gray600">
-              {formatTimestamp(lastResult.timestamp)} • 
+              {formatTimestamp(lastResult.timestamp)} •
               Processed in {lastResult.processing_time.toFixed(2)}s
             </Text>
 
@@ -151,19 +151,19 @@ const Sidebar = () => {
             {lastResult.enrichment_data && (
               <Stack spacing="spacingXs">
                 <Text fontWeight="fontWeightMedium">AI Enrichment Results:</Text>
-                
+
                 {lastResult.enrichment_data.seo_score != null && (
                   <Text fontSize="fontSizeS">
                     SEO Score: {lastResult.enrichment_data.seo_score}/100
                   </Text>
                 )}
-                
+
                 {lastResult.enrichment_data.suggested_meta_description != null && (
                   <Text fontSize="fontSizeS">
                     Meta Description: "{lastResult.enrichment_data.suggested_meta_description}"
                   </Text>
                 )}
-                
+
                 {lastResult.enrichment_data.keywords != null && lastResult.enrichment_data.keywords.length > 0 && (
                   <Text fontSize="fontSizeS">
                     Keywords: {lastResult.enrichment_data.keywords.join(', ')}
@@ -191,7 +191,7 @@ const Sidebar = () => {
 
       {/* Instructions */}
       <Note variant="primary" title="How it works">
-        This tool validates your content, enriches it with AI-generated metadata, 
+        This tool validates your content, enriches it with AI-generated metadata,
         and adds it to your Marketo campaign list. All actions are logged for audit purposes.
       </Note>
     </Stack>

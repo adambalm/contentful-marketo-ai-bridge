@@ -17,9 +17,9 @@
 ## Epic 1: Content Activation Workflow
 
 ### Story 1.1: Manual Content Activation
-**As** Maria, a Marketing Operations Manager  
-**I want** to manually trigger content activation from within the Contentful sidebar  
-**So that** I can control when content gets processed and syndicated to marketing platforms  
+**As** Maria, a Marketing Operations Manager
+**I want** to manually trigger content activation from within the Contentful sidebar
+**So that** I can control when content gets processed and syndicated to marketing platforms
 
 **Acceptance Criteria**:
 - ✅ "Activate in Marketo" button appears in Contentful entry sidebar
@@ -28,9 +28,9 @@
 - ✅ Activation process completes in <5 seconds
 
 ### Story 1.2: Content Validation & Accessibility
-**As** Maria, a Marketing Operations Manager  
-**I want** content to be automatically validated against our controlled vocabulary and accessibility standards  
-**So that** I can ensure compliance with our content governance and accessibility requirements  
+**As** Maria, a Marketing Operations Manager
+**I want** content to be automatically validated against our controlled vocabulary and accessibility standards
+**So that** I can ensure compliance with our content governance and accessibility requirements
 
 **Acceptance Criteria**:
 - ✅ Pydantic schema validates 25+ marketing tags from controlled vocabulary
@@ -40,9 +40,9 @@
 - [ ] Vision model integration (Qwen 2.5VL 7b local, gpt-4o production)
 
 ### Story 1.3: AI Content Enrichment
-**As** Maria, a Marketing Operations Manager  
-**I want** AI to automatically generate meta descriptions and keywords  
-**So that** I can ensure 100% SEO metadata coverage without manual effort  
+**As** Maria, a Marketing Operations Manager
+**I want** AI to automatically generate meta descriptions and keywords
+**So that** I can ensure 100% SEO metadata coverage without manual effort
 
 **Acceptance Criteria**:
 - ✅ OpenAI integration generates <160 char meta descriptions
@@ -55,9 +55,9 @@
 ## Epic 2: Brand Compliance & Audit
 
 ### Story 2.1: Brand Voice Analysis
-**As** Maria, a Marketing Operations Manager  
-**I want** AI to analyze content against our brand voice guidelines  
-**So that** I can maintain consistency across all marketing materials  
+**As** Maria, a Marketing Operations Manager
+**I want** AI to analyze content against our brand voice guidelines
+**So that** I can maintain consistency across all marketing materials
 
 **Acceptance Criteria**:
 - ✅ Categorical scoring for professionalism, accessibility, action-orientation
@@ -66,9 +66,9 @@
 - ✅ Results logged in ActivationLog for trend analysis
 
 ### Story 2.2: Complete Audit Trail
-**As** Maria, a Marketing Operations Manager  
-**I want** every activation to be logged with complete details  
-**So that** I can demonstrate compliance and track AI decision-making  
+**As** Maria, a Marketing Operations Manager
+**I want** every activation to be logged with complete details
+**So that** I can demonstrate compliance and track AI decision-making
 
 **Acceptance Criteria**:
 - ✅ JSONL format logging for every activation attempt
@@ -81,9 +81,9 @@
 ## Epic 3: Platform Integration & Resilience
 
 ### Story 3.1: Marketing Platform Flexibility
-**As** Maria, a Marketing Operations Manager  
-**I want** to switch between different marketing platforms (Marketo, HubSpot)  
-**So that** I can adapt to changing business requirements without code changes  
+**As** Maria, a Marketing Operations Manager
+**I want** to switch between different marketing platforms (Marketo, HubSpot)
+**So that** I can adapt to changing business requirements without code changes
 
 **Acceptance Criteria**:
 - ✅ Marketing platform factory pattern implemented
@@ -92,9 +92,9 @@
 - ✅ Consistent interface across all platform implementations
 
 ### Story 3.2: Graceful Error Handling
-**As** Maria, a Marketing Operations Manager  
-**I want** the system to continue working even when external services fail  
-**So that** I can maintain productivity during service outages  
+**As** Maria, a Marketing Operations Manager
+**I want** the system to continue working even when external services fail
+**So that** I can maintain productivity during service outages
 
 **Acceptance Criteria**:
 - ✅ Rate limiting prevents API quota exhaustion
@@ -107,9 +107,9 @@
 ## Epic 4: Developer Experience & Quality
 
 ### Story 4.1: Professional Development Standards
-**As** a developer joining the project  
-**I want** comprehensive testing and quality gates  
-**So that** I can contribute confidently without breaking existing functionality  
+**As** a developer joining the project
+**I want** comprehensive testing and quality gates
+**So that** I can contribute confidently without breaking existing functionality
 
 **Acceptance Criteria**:
 - ✅ 30 test cases with 100% core business logic coverage
@@ -118,9 +118,9 @@
 - ✅ All external dependencies mocked in tests
 
 ### Story 4.2: Portfolio Demonstration
-**As** Maria's manager reviewing this portfolio project  
-**I want** clear documentation and professional presentation  
-**So that** I can assess technical capability and architectural thinking  
+**As** Maria's manager reviewing this portfolio project
+**I want** clear documentation and professional presentation
+**So that** I can assess technical capability and architectural thinking
 
 **Acceptance Criteria**:
 - ✅ Comprehensive README with architecture diagrams
@@ -133,9 +133,9 @@
 ## Secondary User: Content Creator
 
 ### Story 5.1: Content Guidelines Feedback
-**As** a content creator using Contentful  
-**I want** immediate feedback on brand voice compliance  
-**So that** I can improve my content before submitting for activation  
+**As** a content creator using Contentful
+**I want** immediate feedback on brand voice compliance
+**So that** I can improve my content before submitting for activation
 
 **Future Enhancement**:
 - Real-time brand voice analysis during content editing
@@ -143,9 +143,9 @@
 - Content template recommendations
 
 ### Story 5.2: Performance Insights
-**As** a content creator  
-**I want** to see how my activated content performs in campaigns  
-**So that** I can learn what content types drive the best results  
+**As** a content creator
+**I want** to see how my activated content performs in campaigns
+**So that** I can learn what content types drive the best results
 
 **Future Enhancement**:
 - Dashboard showing activation success rates

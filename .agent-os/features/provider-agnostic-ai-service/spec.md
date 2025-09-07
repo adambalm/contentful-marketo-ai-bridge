@@ -43,12 +43,12 @@ class AIProvider(ABC):
     def generate_content(self, prompt: str, context: Dict) -> str:
         """Generate content based on prompt and context"""
         pass
-    
+
     @abstractmethod
     def generate_alt_text(self, image_url: str, context: str) -> str:
         """Generate alt text for images (vision-capable providers only)"""
         pass
-    
+
     @abstractmethod
     def analyze_brand_voice(self, content: str) -> Dict[str, str]:
         """Analyze content for brand voice compliance"""
@@ -108,7 +108,7 @@ class OpenAIProvider(AIProvider):
         self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.text_model = os.getenv("OPENAI_TEXT_MODEL", "gpt-4o-mini")
         self.vision_model = os.getenv("OPENAI_VISION_MODEL", "gpt-4o")
-    
+
     def generate_content(self, prompt: str, context: Dict) -> str:
         # GPT-4o-mini for cost-effective text processing
         response = self.client.chat.completions.create(
@@ -128,7 +128,7 @@ class LocalModelProvider(AIProvider):
         self.ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434")
         self.text_model = os.getenv("LOCAL_TEXT_MODEL", "llama2")
         self.vision_model = os.getenv("LOCAL_VISION_MODEL", "qwen2.5vl")
-    
+
     def generate_content(self, prompt: str, context: Dict) -> str:
         # Ollama API integration for local models
         response = requests.post(f"{self.ollama_url}/api/generate", json={
@@ -164,7 +164,7 @@ OPENAI_TEXT_MODEL=gpt-4o-mini
 OPENAI_VISION_MODEL=gpt-4o
 OPENAI_ORGANIZATION=your_org_id
 
-# Local model configuration  
+# Local model configuration
 OLLAMA_URL=http://localhost:11434
 LOCAL_TEXT_MODEL=llama2
 LOCAL_VISION_MODEL=qwen2.5vl
@@ -193,7 +193,7 @@ class RateLimitError(AIProviderError):
     """Rate limit exceeded, retry after delay"""
     pass
 
-class AuthenticationError(AIProviderError):  
+class AuthenticationError(AIProviderError):
     """Invalid API key or authentication failure"""
     pass
 
@@ -251,15 +251,15 @@ class NewProviderAI(AIProvider):
     def __init__(self):
         self.api_key = os.getenv("NEWPROVIDER_API_KEY")
         self.client = NewProviderClient(api_key=self.api_key)
-    
+
     def generate_content(self, prompt: str, context: Dict) -> str:
         # Provider-specific implementation
         pass
-    
+
     def generate_alt_text(self, image_url: str, context: str) -> str:
         # Vision capability implementation (optional)
         pass
-    
+
     def analyze_brand_voice(self, content: str) -> Dict[str, str]:
         # Brand voice analysis implementation
         pass

@@ -19,7 +19,7 @@ These are the tasks to be completed for the spec detailed in @.agent-os/features
 - [ ] Add Contentful variables to `.env.template`:
   ```bash
   CONTENTFUL_SPACE_ID=your_space_id_here
-  CONTENTFUL_MANAGEMENT_TOKEN=your_management_token_here  
+  CONTENTFUL_MANAGEMENT_TOKEN=your_management_token_here
   CONTENTFUL_DELIVERY_TOKEN=your_delivery_token_here
   CONTENTFUL_ENVIRONMENT=master
   ```
@@ -38,7 +38,7 @@ These are the tasks to be completed for the spec detailed in @.agent-os/features
 **Task 2.1: Create Article Content Type**
 - [ ] Define Article content type in Contentful with fields:
   - title (Short text, required)
-  - body (Long text, required) 
+  - body (Long text, required)
   - summary (Short text, optional)
   - campaignTags (Tags, required)
   - hasImages (Boolean, default false)
@@ -54,7 +54,7 @@ These are the tasks to be completed for the spec detailed in @.agent-os/features
   - activation_timestamp (Date and time)
   - ai_outputs (JSON object)
   - validation_results (JSON object)
-  - marketo_response (JSON object)  
+  - marketo_response (JSON object)
   - status (Select: draft, processing, completed, failed)
   - brand_voice_analysis (JSON object)
 - [ ] Publish ActivationLog content type
@@ -148,7 +148,7 @@ These are the tasks to be completed for the spec detailed in @.agent-os/features
 3. **Error Recovery**: Disconnect from Contentful and verify JSONL fallback
 4. **Rate Limiting**: Send burst of requests and verify throttling
 
-### Integration Testing  
+### Integration Testing
 1. **End-to-End**: Complete activation flow using real Contentful data
 2. **Content Model**: Verify all required fields map correctly
 3. **Authentication**: Test with various token permission levels

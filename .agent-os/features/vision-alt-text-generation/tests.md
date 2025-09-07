@@ -117,7 +117,7 @@ This is the tests coverage details for the spec detailed in @.agent-os/features/
 
 **Usage Monitoring Tests**
 - `test_openai_api_usage_tracking()` - Track API calls and estimated costs
-- `test_daily_usage_limits()` - Enforce configurable daily spending limits  
+- `test_daily_usage_limits()` - Enforce configurable daily spending limits
 - `test_monthly_budget_controls()` - Monthly budget tracking and limits
 - `test_cost_per_activation_metrics()` - Calculate cost per activation with vision
 - `test_usage_reporting()` - Generate usage reports for cost analysis
@@ -176,7 +176,7 @@ def sample_test_images():
             'context': {'title': 'Analytics Guide', 'tags': ['analytics', 'dashboard']}
         },
         'product_photo': {
-            'url': 'https://example.com/product.jpg', 
+            'url': 'https://example.com/product.jpg',
             'expected_alt': 'Content management interface with editing tools',
             'context': {'title': 'CMS Features', 'tags': ['product', 'cms']}
         }
@@ -235,7 +235,7 @@ TEST_CONTEXTS = [
     {
         'title': 'Developer API Documentation',
         'campaign_tags': ['developer', 'tutorial', 'technical'],
-        'content_type': 'documentation',  
+        'content_type': 'documentation',
         'target_audience': 'developer'
     },
     {
@@ -274,7 +274,7 @@ TEST_CONTEXTS = [
 
 ### Functional Success
 - [ ] 95%+ of articles with images receive generated alt text
-- [ ] Both OpenAI and Ollama models process images successfully  
+- [ ] Both OpenAI and Ollama models process images successfully
 - [ ] Generated alt text meets WCAG 2.1 Level AA standards
 - [ ] Vision processing integrates seamlessly with activation workflow
 - [ ] Graceful degradation when vision models unavailable
@@ -303,7 +303,7 @@ def test_activate_with_vision_enabled(client, article_with_images):
     pass
 
 def test_activate_with_vision_disabled(client, article_with_images):
-    """Ensure activation works when vision processing disabled.""" 
+    """Ensure activation works when vision processing disabled."""
     pass
 
 def test_existing_alt_text_preserved(client, article_with_alt_text):

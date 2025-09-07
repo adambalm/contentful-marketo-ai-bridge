@@ -109,13 +109,13 @@ class ContentfulService:
         self.delivery_client = contentful.Client(space_id, access_token)
         self.management_client = contentful_management.Client(management_token)
         self.space_id = space_id
-    
+
     async def get_article(self, entry_id: str) -> ContentfulArticle:
         """Retrieve complete article with assets and relationships"""
         entry = await self.delivery_client.entry(entry_id)
         assets = await self._resolve_assets(entry)
         return ContentfulArticle.from_entry(entry, assets)
-    
+
     async def update_article_metadata(self, entry_id: str, metadata: Dict):
         """Update article with processing metadata"""
         entry = await self.management_client.entries(self.space_id, entry_id).find()
@@ -149,7 +149,7 @@ CONTENTFUL_ENVIRONMENT=master  # or staging
 
 ### Technical Excellence
 - **API Integration Expertise**: Demonstrate professional third-party API integration
-- **Data Mapping Proficiency**: Complex content model to schema mapping capabilities  
+- **Data Mapping Proficiency**: Complex content model to schema mapping capabilities
 - **Error Handling Maturity**: Robust error handling for external API dependencies
 - **Performance Optimization**: Caching and rate limiting for production scalability
 

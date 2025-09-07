@@ -157,19 +157,19 @@ These are the implementation tasks for ActivationLog Audit Trail detailed in @.a
 class ActivationLog(BaseModel):
     activation_id: str = Field(..., regex="^act_[0-9a-f]{32}$")
     timestamp: datetime = Field(default_factory=datetime.utcnow)
-    
+
     # Complete pipeline results
     content_input: Dict[str, Any]
     validation_results: ValidationResult
     ai_enrichment: AIEnrichmentResult
     brand_voice_analysis: BrandVoiceResult
     platform_publishing: PlatformPublishingResult
-    
+
     # Performance and quality metrics
     processing_metadata: ProcessingMetadata
     performance_metrics: PerformanceMetrics
     quality_assessment: QualityAssessment
-    
+
     # ML training support
     training_labels: Optional[Dict[str, Any]] = None
     suitable_for_training: bool = True
@@ -183,8 +183,8 @@ class ActivationLogStorage:
         """Atomic JSONL logging with <50ms overhead"""
         with open(self.current_file, 'a', encoding='utf-8') as f:
             f.write(activation_log.json() + '\n')
-    
-    def query_activations(self, start_date: datetime, end_date: datetime, 
+
+    def query_activations(self, start_date: datetime, end_date: datetime,
                          filters: Dict[str, Any] = None) -> List[ActivationLog]:
         """Efficient querying with date range and filter support"""
         # Implementation with optimized file scanning and filtering

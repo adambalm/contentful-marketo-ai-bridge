@@ -42,15 +42,15 @@ class ContentfulService:
     def __init__(self, space_id: str, access_token: str):
         self.client = contentful.Client(space_id, access_token)
         self.management_client = contentful_management.Client(access_token)
-    
+
     async def get_article(self, entry_id: str) -> ContentfulArticle:
         """Retrieve article with all linked assets"""
         pass
-    
+
     async def get_article_images(self, entry_id: str) -> List[ContentfulAsset]:
         """Get all images linked to an article"""
         pass
-    
+
     async def update_article_alt_text(self, entry_id: str, alt_text: Dict[str, str]):
         """Update alt text for article images"""
         pass

@@ -1,20 +1,20 @@
+import os
 import time
 import uuid
 from datetime import datetime, timezone
-
-import os
 from pathlib import Path
+
 from fastapi import FastAPI, HTTPException, Request
 
 from schemas.activation import ActivationPayload, ActivationResult
 from schemas.article import ArticleIn
 from services.ai_service import AIService
-from services.contentful import ContentfulService
+from services.live_contentful import LiveContentfulService
 from services.marketing_platform import MarketingPlatformFactory
 
 app = FastAPI(title="Portfolio Backend API", version="1.0.0")
 
-contentful_service = ContentfulService()
+contentful_service = LiveContentfulService()
 marketing_service = MarketingPlatformFactory.create_service()
 ai_service = AIService()
 
@@ -81,7 +81,9 @@ async def activate_content(payload: ActivationPayload, request: Request):
         # Rate limit per client IP
         client_ip = request.client.host if request and request.client else "unknown"
         if _is_rate_limited(client_ip):
-            raise HTTPException(status_code=429, detail="Rate limit exceeded. Please retry later.")
+            raise HTTPException(
+                status_code=429, detail="Rate limit exceeded. Please retry later."
+            )
         # Step 1: Retrieve article from Contentful
         raw_article = contentful_service.get_article(payload.entry_id)
 
@@ -105,9 +107,16 @@ async def activate_content(payload: ActivationPayload, request: Request):
 
         # Step 3: AI enrichment (if enabled)
         enrichment_data = None
+        generated_alt_text = None
         if payload.enrichment_enabled:
             enrichment_result = ai_service.enrich_content(article.model_dump())
             enrichment_data = enrichment_result.model_dump()
+
+            # Generate alt text for images if present
+            if article.has_images and not article.alt_text:
+                generated_alt_text = ai_service.generate_alt_text(article.model_dump())
+                if generated_alt_text:
+                    enrichment_data["generated_alt_text"] = generated_alt_text
 
             # --- Brand-voice advisory mapping ---
             tone = enrichment_data.get("tone_analysis") or {}
@@ -127,7 +136,9 @@ async def activate_content(payload: ActivationPayload, request: Request):
                 "professionalism": advisory(professionalism),
                 "confidence": advisory(confident),
                 "action_orientation": advisory(action_oriented),
-                "overall": advisory((professionalism + confident + action_oriented) / 3.0),
+                "overall": advisory(
+                    (professionalism + confident + action_oriented) / 3.0
+                ),
             }
 
         # Step 4: Add to Marketo list

@@ -33,30 +33,30 @@ sequenceDiagram
     User->>App: Clicks "Activate in Marketo"
     App->>API: POST /activate {ArticleIn}
     API->>Pyd: Validate schema & controlled vocab
-    
+
     alt Validation Success
         Pyd-->>API: Valid ArticleIn
         API->>AI: Request enrichment (meta, keywords, brand voice)
-        
+
         alt AI Service Available
             AI-->>API: Enriched content
         else AI Service Unavailable
             AI-->>API: Error (continue with partial data)
         end
-        
+
         API->>Mock: Push to Marketo list
-        
+
         alt Mock/Marketo Success
             Mock-->>API: Success response
         else Service Unavailable
             Mock-->>API: Fallback mock response
         end
-        
+
         API->>CMA: Create ActivationLog entry
         CMA-->>Log: Store evidence & results
         API-->>App: Success + ActivationLog ID
         App-->>User: Show success + log link
-        
+
     else Validation Failure
         Pyd-->>API: Validation errors
         API-->>App: 422 + error details
@@ -123,15 +123,15 @@ class ArticleIn(BaseModel):
     cta_text: Optional[str] = Field(None, max_length=80, description="Call-to-action text")
     cta_url: Optional[str] = Field(None, description="Call-to-action URL")
     content_type: str = Field("article", description="Content type identifier")
-    
+
     @validator('campaign_tags')
     def validate_controlled_vocabulary(cls, v):
         # Comprehensive controlled vocabulary taxonomy
         allowed_tags = {
             # Content Types
-            "product-launch", "thought-leadership", "case-study", "webinar", "ebook", 
+            "product-launch", "thought-leadership", "case-study", "webinar", "ebook",
             "release-notes", "tutorial", "whitepaper", "demo", "blog-post",
-            # Audience Segments  
+            # Audience Segments
             "developer", "marketer", "enterprise", "startup", "technical-decision-maker",
             "content-creator", "product-manager", "executive",
             # Funnel Stages
@@ -144,14 +144,14 @@ class ArticleIn(BaseModel):
         if invalid_tags:
             raise ValueError(f"Invalid tags: {invalid_tags}. Must use controlled vocabulary: {sorted(allowed_tags)}")
         return v
-    
+
     @validator('alt_text')
     def validate_alt_text_when_images_present(cls, v, values):
         has_images = values.get('has_images', False)
         if has_images and not v:
             raise ValueError("Alt text is required when article contains images")
         return v
-    
+
     @validator('cta_url')
     def validate_cta_url_format(cls, v):
         if v and not v.startswith(('http://', 'https://')):
@@ -171,12 +171,12 @@ class ActivationPayload(BaseModel):
     cta_url: Optional[str] = Field(None)
     marketo_list_id: str
     activation_timestamp: str
-    
+
     @validator('campaign_tags')
     def map_controlled_vocabulary(cls, v):
         # Map or drop invalid tags with logging
         allowed_tags = {
-            "product-launch", "thought-leadership", "case-study", "webinar", "ebook", 
+            "product-launch", "thought-leadership", "case-study", "webinar", "ebook",
             "release-notes", "tutorial", "whitepaper", "demo", "blog-post",
             "developer", "marketer", "enterprise", "startup", "technical-decision-maker",
             "content-creator", "product-manager", "executive",
@@ -191,7 +191,7 @@ class ActivationPayload(BaseModel):
             # This would be logged in ActivationLog in actual implementation
             print(f"Advisory: Dropped invalid tags {dropped} from outbound payload")
         return mapped_tags
-    
+
     @validator('cta_url')
     def validate_cta_url_format(cls, v):
         if v and not v.startswith(('http://', 'https://')):
@@ -229,7 +229,7 @@ class ActivationLog(BaseModel):
 ### Brand Voice Analysis
 - **Criteria:** Contentful brand heuristics
   - Professionalism: aspirational, forward-thinking, technically credible
-  - Dual-audience accessibility: technical depth + empowering simplicity  
+  - Dual-audience accessibility: technical depth + empowering simplicity
   - Action-oriented language: active verbs, efficiency metaphors
 - **Output:** Categorical results for each heuristic (pass | advisory) with improvement suggestions
 - **Format:** `{"professionalism": "pass", "dual_audience": "advisory", "action_oriented": "pass", "suggestions": ["Use more active verbs in opening paragraph"]}`
@@ -248,29 +248,29 @@ class ActivationLog(BaseModel):
 ```python
 class MockMarketoService:
     """Mock service for development and testing when Marketo sandbox unavailable"""
-    
+
     def __init__(self):
         self.mock_lists = {
             "ML_DEMO_001": "Product Launch Prospects",
             "ML_DEMO_002": "Thought Leadership Audience",
             "ML_DEMO_003": "Developer Community"
         }
-    
+
     def add_to_list(self, payload: ActivationPayload) -> dict:
         """Simulate Marketo list membership addition"""
         import time
         import random
-        
+
         # Simulate realistic API latency
         time.sleep(0.25)  # 250ms simulated latency
-        
+
         # Determine list based on campaign tags
         list_id = "ML_DEMO_001"  # default
         if "developer" in payload.campaign_tags:
             list_id = "ML_DEMO_003"
         elif "thought-leadership" in payload.campaign_tags:
             list_id = "ML_DEMO_002"
-            
+
         return {
             "success": True,
             "list_id": list_id,
@@ -281,7 +281,7 @@ class MockMarketoService:
             "timestamp": payload.activation_timestamp,
             "content_title": payload.title
         }
-    
+
     def authenticate(self) -> dict:
         """Mock authentication for development"""
         return {
@@ -463,7 +463,7 @@ Max 7 keywords, minimum 3.
 - **Mock Service:** Verify realistic response timing and data structure
 - **Performance:** API response times under load
 
-### Integration Tests  
+### Integration Tests
 - **End-to-end Flow:** Complete activation with all services
 - **Fallback Scenarios:** AI service down, Marketo unavailable
 - **ActivationLog Creation:** Verify evidence logging in all scenarios
@@ -509,7 +509,7 @@ MARKETO_ENDPOINT_URL=<sandbox_or_mock_url>
 ### Deployment Targets
 - **Development:** Local FastAPI with mock services, hot reload enabled
 - **MVP Demo:** Render deployment with Marketo sandbox integration
-- **Production Considerations:** 
+- **Production Considerations:**
   - Environment-based service switching (mock vs. real Marketo)
   - Rate limiting: 10 requests/minute per user
   - Health checks on `/health` endpoint
@@ -537,7 +537,7 @@ MARKETO_ENDPOINT_URL=<sandbox_or_mock_url>
 **Risk:** Without validation/enrichment, entries risk falling into 35% missing metadata and 60-70% unused content categories
 **Mitigation:** Pydantic schema enforcement, OpenAI enrichment pipeline, controlled vocabulary validation
 
-### Accessibility Compliance Risk  
+### Accessibility Compliance Risk
 **Risk:** Missing alt text (present in only 26% of sites) undermines accessibility and SEO
 **Mitigation:** Alt text completeness validation in ArticleIn schema, AI-powered alt text generation
 

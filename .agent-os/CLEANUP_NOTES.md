@@ -44,5 +44,5 @@ contentful-marketo-ai-bridge/
 └── README.md        # Clean product overview
 ```
 
-**Note**: This cleanup is for AFTER main development is complete. 
+**Note**: This cleanup is for AFTER main development is complete.
 Current priority: Contentful integration and Vision features.

@@ -74,7 +74,6 @@ class TestActivateEndpoint:
                 return_value={"success": True, "leads_added": 1},
             ),
         ):
-
             response = client.post("/activate", json=valid_activation_payload)
 
             assert response.status_code == 200
@@ -106,7 +105,6 @@ class TestActivateEndpoint:
                 return_value={"success": True, "leads_added": 1},
             ),
         ):
-
             response = client.post("/activate", json=payload)
 
             assert response.status_code == 200
@@ -230,7 +228,6 @@ class TestActivateEndpoint:
             ),
             patch("main.marketing_service.add_to_list", return_value={"success": True}),
         ):
-
             response = client.post("/activate", json=valid_activation_payload)
 
             # Should still complete successfully without enrichment
@@ -259,7 +256,6 @@ class TestActivateEndpoint:
                 side_effect=Exception("Marketo API error"),
             ),
         ):
-
             response = client.post("/activate", json=valid_activation_payload)
 
             assert response.status_code == 200
@@ -294,7 +290,6 @@ class TestActivateEndpoint:
             ),
             patch("main.marketing_service.add_to_list", return_value={"success": True}),
         ):
-
             response = client.post("/activate", json=valid_activation_payload)
 
             assert response.status_code == 200

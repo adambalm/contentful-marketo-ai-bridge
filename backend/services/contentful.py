@@ -63,9 +63,9 @@ class ContentfulService:
         Mock method to fetch the most recent ActivationLog for an entry.
         Scans the JSONL file from end to beginning for performance in small files.
         """
+        import json
         import os
         from pathlib import Path
-        import json
 
         log_path = os.getenv("ACTIVATION_LOG_PATH", "activation_logs.jsonl")
         path = Path(log_path)

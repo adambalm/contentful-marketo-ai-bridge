@@ -102,11 +102,11 @@ class AIProvider(ABC):
     @abstractmethod
     def generate_content(self, prompt: str, context: Dict) -> str:
         pass
-    
+
     @abstractmethod
     def generate_alt_text(self, image_url: str, context: str) -> str:
         pass
-    
+
     @abstractmethod
     def analyze_brand_voice(self, content: str) -> Dict[str, str]:
         pass
@@ -115,7 +115,7 @@ class AIService:
     def __init__(self):
         provider = os.getenv("AI_PROVIDER", "openai").lower()
         self.provider = AIServiceFactory.create_provider(provider)
-    
+
     def enrich_content(self, article_data: Dict) -> Dict:
         # Provider-agnostic content enrichment
         return self.provider.generate_content(article_data)
@@ -125,7 +125,7 @@ class AIService:
 ```bash
 # Environment variables implemented
 AI_PROVIDER=openai              # Production default
-AI_PROVIDER=local               # Development option  
+AI_PROVIDER=local               # Development option
 AI_PROVIDER=mock                # Testing option
 OPENAI_API_KEY=sk-...          # Secure credential management
 OPENAI_TEXT_MODEL=gpt-4o-mini  # Cost-optimized text model
@@ -217,7 +217,7 @@ class ClaudeProvider(AIProvider):
 
 ### Response Time Performance ✅
 - **Text Processing**: Average 2.5s (requirement: <5s) ✅
-- **Vision Processing**: Average 4.2s (requirement: <10s) ✅  
+- **Vision Processing**: Average 4.2s (requirement: <10s) ✅
 - **Provider Switching**: <100ms overhead for provider selection ✅
 - **Error Recovery**: <1s average fallback time to mock provider ✅
 

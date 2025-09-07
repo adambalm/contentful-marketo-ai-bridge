@@ -7,7 +7,7 @@
 ## Phase 1: Infrastructure Setup (4-6 hours)
 
 ### Task 1.1: Image Upload Endpoint
-**Estimate**: 2 hours  
+**Estimate**: 2 hours
 **Priority**: Critical
 
 ```python
@@ -30,7 +30,7 @@ async def upload_image(file: UploadFile = File(...)):
 4. Add comprehensive error handling
 5. Write upload endpoint tests
 
-### Task 1.2: Enhanced Data Schemas  
+### Task 1.2: Enhanced Data Schemas
 **Estimate**: 1 hour
 **Priority**: Critical
 
@@ -49,7 +49,7 @@ class ArticleIn(BaseModel):
 - [ ] Pydantic validation for new fields
 
 ### Task 1.3: Vision Service Architecture
-**Estimate**: 2 hours  
+**Estimate**: 2 hours
 **Priority**: Critical
 
 ```python
@@ -70,7 +70,7 @@ class VisionService(ABC):
 
 ### Task 2.1: OpenAI Vision Provider
 **Estimate**: 4 hours
-**Priority**: High  
+**Priority**: High
 
 ```python
 class OpenAIVisionProvider(VisionService):
@@ -118,7 +118,7 @@ Generate a concise, SEO-friendly alt text (125-150 characters) that:
 
 **Validation Checks:**
 - Length optimization (125-150 characters)
-- WCAG 2.1 compliance verification  
+- WCAG 2.1 compliance verification
 - Brand voice scoring
 - Keyword relevance assessment
 
@@ -164,7 +164,7 @@ class QwenVisionProvider(VisionService):
 
 **Acceptance Criteria:**
 - [ ] Ollama API integration
-- [ ] Image preprocessing pipeline  
+- [ ] Image preprocessing pipeline
 - [ ] Context prompt optimization
 - [ ] Performance benchmarking vs OpenAI
 
@@ -203,27 +203,27 @@ class QwenVisionProvider(VisionService):
 - [ ] Error handling preservation
 
 ### Task 4.2: Comprehensive Testing
-**Estimate**: 2 hours  
+**Estimate**: 2 hours
 **Priority**: Critical
 
 **Test Cases:**
 ```python
 def test_vision_alt_text_generation():
     """Test end-to-end alt text generation"""
-    
+
 def test_multiple_images_processing():
     """Test batch processing of multiple images"""
-    
+
 def test_vision_provider_fallback():
     """Test fallback when primary provider fails"""
-    
+
 def test_alt_text_quality_validation():
     """Test quality scoring and validation"""
 ```
 
 **Coverage Requirements:**
 - [ ] Vision provider selection
-- [ ] Image format validation  
+- [ ] Image format validation
 - [ ] Alt text quality scoring
 - [ ] Error handling edge cases
 - [ ] Performance under load
@@ -236,7 +236,7 @@ def test_alt_text_quality_validation():
 - Vision service architecture
 - Basic testing setup
 
-### Sprint 2 (Week 2): OpenAI Integration  
+### Sprint 2 (Week 2): OpenAI Integration
 - OpenAI vision provider
 - Prompt engineering
 - Quality validation

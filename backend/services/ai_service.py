@@ -3,13 +3,19 @@ Provider-agnostic AI service for content enrichment.
 Supports OpenAI API and future local model providers.
 """
 
+import logging
 import os
+import re
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Optional
 
 from openai import OpenAI
 
 from schemas.enrichment import AIEnrichmentPayload
+
+from .vision_service import VisionService
+
+logger = logging.getLogger(__name__)
 
 
 class AIProvider(ABC):
@@ -28,6 +34,81 @@ class AIProvider(ABC):
         """
         pass
 
+    def generate_alt_text_for_images(
+        self, article_data: dict[str, Any]
+    ) -> Optional[str]:
+        """
+        Generate alt text for images if present in article.
+        Default implementation returns None - providers can override.
+        """
+        return None
+
+    def _extract_image_urls_from_content(self, content: str) -> list[str]:
+        """Extract image URLs from HTML or Markdown content."""
+        image_urls = []
+
+        # HTML img tags
+        html_pattern = r'<img[^>]+src=["\']([^"\']+)["\'][^>]*>'
+        html_matches = re.findall(html_pattern, content, re.IGNORECASE)
+        image_urls.extend(html_matches)
+
+        # Markdown images
+        md_pattern = r"!\[([^\]]*)\]\(([^)]+)\)"
+        md_matches = re.findall(md_pattern, content)
+        image_urls.extend([url for alt, url in md_matches])
+
+        # Contentful asset URLs
+        contentful_pattern = r"https://images\.ctfassets\.net/[a-zA-Z0-9]+/[a-zA-Z0-9]+/[a-zA-Z0-9]+/[^?\s]+"
+        contentful_matches = re.findall(contentful_pattern, content)
+        image_urls.extend(contentful_matches)
+
+        # Filter for valid image URLs
+        valid_urls = []
+        for url in image_urls:
+            if self._is_valid_image_url(url.strip()):
+                valid_urls.append(url.strip())
+
+        return valid_urls
+
+    def _is_valid_image_url(self, url: str) -> bool:
+        """Check if URL is likely an image."""
+        if not url:
+            return False
+
+        # Check for image extensions
+        image_extensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"]
+        url_lower = url.lower()
+
+        return any(url_lower.endswith(ext) for ext in image_extensions)
+
+    def _extract_contentful_asset_urls(self, article_data: dict[str, Any]) -> list[str]:
+        """Extract image URLs from Contentful Asset fields (featured_image, image_gallery)."""
+        urls = []
+
+        # Extract from featured_image field
+        featured_image = article_data.get("featured_image")
+        if featured_image and hasattr(featured_image, "url"):
+            # Call the url() method to get the actual URL string
+            url_str = (
+                featured_image.url()
+                if callable(featured_image.url)
+                else featured_image.url
+            )
+            if url_str:
+                urls.append(url_str)
+
+        # Extract from image_gallery field
+        image_gallery = article_data.get("image_gallery", [])
+        if isinstance(image_gallery, list):
+            for asset in image_gallery:
+                if hasattr(asset, "url"):
+                    # Call the url() method to get the actual URL string
+                    url_str = asset.url() if callable(asset.url) else asset.url
+                    if url_str:
+                        urls.append(url_str)
+
+        return urls
+
 
 class OpenAIProvider(AIProvider):
     """OpenAI API provider for content enrichment."""
@@ -38,6 +119,7 @@ class OpenAIProvider(AIProvider):
             # For testing purposes, use a dummy key
             api_key = "dummy-key-for-testing"
         self.client = OpenAI(api_key=api_key)
+        self.vision_service = VisionService(provider="openai")
 
     def enrich_content(self, article_data: dict[str, Any]) -> AIEnrichmentPayload:
         """Generate summary and keywords using OpenAI API."""
@@ -118,6 +200,54 @@ class OpenAIProvider(AIProvider):
                 fallback=True,
             )
 
+    def generate_alt_text_for_images(
+        self, article_data: dict[str, Any]
+    ) -> Optional[str]:
+        """Generate alt text for images using GPT-4o vision if images are present."""
+        # Check both hasImages (camelCase) and has_images (snake_case)
+        has_images = article_data.get("hasImages", False) or article_data.get(
+            "has_images", False
+        )
+        if not has_images:
+            return None
+
+        # Create context from article
+        context = (
+            f"{article_data.get('title', '')} - {article_data.get('body', '')[:200]}"
+        )
+
+        # Extract image URLs from multiple sources
+        image_urls = []
+
+        # 1. Extract from body content (HTML/Markdown embedded images)
+        body = article_data.get("body", "")
+        body_urls = self._extract_image_urls_from_content(body)
+        image_urls.extend(body_urls)
+
+        # 2. Extract from Contentful Asset fields (featured_image, image_gallery)
+        contentful_urls = self._extract_contentful_asset_urls(article_data)
+        image_urls.extend(contentful_urls)
+
+        if not image_urls:
+            logger.warning(
+                "Article marked has_images=True but no image URLs found in body or asset fields"
+            )
+            return None
+
+        # Generate alt text for the first image (could be extended for multiple)
+        try:
+            image_url = image_urls[0]  # Process first image
+            # Ensure URL has protocol (Contentful URLs start with //)
+            if image_url.startswith("//"):
+                image_url = "https:" + image_url
+
+            alt_text = self.vision_service.generate_alt_text(image_url, context)
+            logger.info(f"OpenAI Vision generated alt text for {image_url[:50]}...")
+            return alt_text
+        except Exception as e:
+            logger.error(f"OpenAI Vision processing failed: {e}")
+            return "Image description unavailable"
+
 
 class LocalModelProvider(AIProvider):
     """Ollama local model provider for content enrichment."""
@@ -129,6 +259,7 @@ class LocalModelProvider(AIProvider):
     ):
         self.model_name = model_name
         self.base_url = base_url
+        self.vision_service = VisionService(provider="qwen")
 
     def enrich_content(self, article_data: dict[str, Any]) -> AIEnrichmentPayload:
         """Generate summary and keywords using Ollama local model."""
@@ -136,7 +267,6 @@ class LocalModelProvider(AIProvider):
         body = article_data.get("body", "")
 
         try:
-
             import requests
 
             # Generate meta description
@@ -222,6 +352,54 @@ class LocalModelProvider(AIProvider):
                 fallback=True,
             )
 
+    def generate_alt_text_for_images(
+        self, article_data: dict[str, Any]
+    ) -> Optional[str]:
+        """Generate alt text for images using Qwen 2.5VL 7b if images are present."""
+        # Check both hasImages (camelCase) and has_images (snake_case)
+        has_images = article_data.get("hasImages", False) or article_data.get(
+            "has_images", False
+        )
+        if not has_images:
+            return None
+
+        # Create context from article
+        context = (
+            f"{article_data.get('title', '')} - {article_data.get('body', '')[:200]}"
+        )
+
+        # Extract image URLs from multiple sources
+        image_urls = []
+
+        # 1. Extract from body content (HTML/Markdown embedded images)
+        body = article_data.get("body", "")
+        body_urls = self._extract_image_urls_from_content(body)
+        image_urls.extend(body_urls)
+
+        # 2. Extract from Contentful Asset fields (featured_image, image_gallery)
+        contentful_urls = self._extract_contentful_asset_urls(article_data)
+        image_urls.extend(contentful_urls)
+
+        if not image_urls:
+            logger.warning(
+                "Article marked has_images=True but no image URLs found in body or asset fields"
+            )
+            return None
+
+        # Generate alt text for the first image (could be extended for multiple)
+        try:
+            image_url = image_urls[0]  # Process first image
+            # Ensure URL has protocol (Contentful URLs start with //)
+            if image_url.startswith("//"):
+                image_url = "https:" + image_url
+
+            alt_text = self.vision_service.generate_alt_text(image_url, context)
+            logger.info(f"Qwen Vision generated alt text for {image_url[:50]}...")
+            return alt_text
+        except Exception as e:
+            logger.error(f"Qwen Vision processing failed: {e}")
+            return "Image description unavailable"
+
 
 class AIService:
     """Main AI service that delegates to the configured provider."""
@@ -243,3 +421,7 @@ class AIService:
     def enrich_content(self, article_data: dict[str, Any]) -> AIEnrichmentPayload:
         """Enrich content using the configured AI provider."""
         return self.provider.enrich_content(article_data)
+
+    def generate_alt_text(self, article_data: dict[str, Any]) -> Optional[str]:
+        """Generate alt text for images if present in article."""
+        return self.provider.generate_alt_text_for_images(article_data)
