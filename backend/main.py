@@ -1,4 +1,6 @@
+import contextlib
 import os
+import re
 import time
 import uuid
 from datetime import datetime, timezone
@@ -19,16 +21,21 @@ load_environment()
 
 app = FastAPI(title="Portfolio Backend API", version="1.0.0")
 
+
 # Add CORS middleware to allow frontend connections
+# Custom CORS handler to allow Contentful app domains
+def custom_cors_origin_checker(origin: str) -> bool:
+    allowed_patterns = [
+        r"^http://localhost:\d+$",
+        r"^https://app\.contentful\.com$",
+        r"^https://[a-f0-9-]+\.ctfcloud\.net$",
+    ]
+    return any(re.match(pattern, origin) for pattern in allowed_patterns)
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:3002",
-        "http://localhost:3003",
-        "https://app.contentful.com",
-    ],
+    allow_origin_regex=r"^(http://localhost:\d+|https://app\.contentful\.com|https://[a-f0-9-]+\.ctfcloud\.net)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
