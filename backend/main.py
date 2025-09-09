@@ -35,7 +35,14 @@ def custom_cors_origin_checker(origin: str) -> bool:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^(http://localhost:\d+|https://app\.contentful\.com|https://.*\.ctfcloud\.net)$",
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001", 
+        "http://localhost:3002",
+        "http://localhost:3003",
+        "https://app.contentful.com",
+        "https://4ce44185-52a1-455d-a1d8-fe60f1be67bb.ctfcloud.net",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
