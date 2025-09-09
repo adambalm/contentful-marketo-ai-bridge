@@ -15,10 +15,13 @@ def load_environment():
     # Get the directory containing this file (backend/)
     backend_dir = Path(__file__).parent
 
-    # Priority order: .env (template) first, then .env.local (secrets override)
+    # Priority order: .env (template) first, then .env.local (dev only), then Render Secret Files (production)
     env_files = [
         backend_dir / ".env",  # Template values (safe to commit) - loaded first
         backend_dir / ".env.local",  # Real secrets (gitignored) - override templates
+        Path(
+            "/etc/secrets/.env"
+        ),  # Render secret files (production) - highest priority
     ]
 
     loaded_files = []

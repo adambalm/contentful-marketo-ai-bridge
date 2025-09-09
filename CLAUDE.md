@@ -44,8 +44,9 @@ For all work on this portfolio project, reference the target job description in 
 
 **Backend (FastAPI with Python 3.10+):**
 ```bash
-cd backend
+# Activate virtual environment from project root
 source .venv/bin/activate
+cd backend
 python -m pytest tests/ -v                    # Run all tests
 python -m pytest tests/test_main.py::test_health_endpoint -v  # Single test
 ruff check .                                   # Lint code

@@ -5,14 +5,34 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 
+from load_env import load_environment
 from schemas.activation import ActivationPayload, ActivationResult
 from schemas.article import ArticleIn
 from services.ai_service import AIService
 from services.live_contentful import LiveContentfulService
 from services.marketing_platform import MarketingPlatformFactory
 
+# Load environment variables (including Render secret files)
+load_environment()
+
 app = FastAPI(title="Portfolio Backend API", version="1.0.0")
+
+# Add CORS middleware to allow frontend connections
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
+        "http://localhost:3003",
+        "https://app.contentful.com",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 contentful_service = LiveContentfulService()
 marketing_service = MarketingPlatformFactory.create_service()
@@ -170,10 +190,8 @@ async def activate_content(payload: ActivationPayload, request: Request):
         )
         append_activation_log(result)
         # Also write to Contentful (mock impl appends to JSONL for MVP)
-        try:
+        with contextlib.suppress(Exception):
             contentful_service.write_activation_log(result.model_dump())
-        except Exception:
-            pass
         return result
 
     except HTTPException:
@@ -193,10 +211,8 @@ async def activate_content(payload: ActivationPayload, request: Request):
             timestamp=datetime.now(timezone.utc),
         )
         append_activation_log(result)
-        try:
+        with contextlib.suppress(Exception):
             contentful_service.write_activation_log(result.model_dump())
-        except Exception:
-            pass
         return result
 
 
