@@ -121,17 +121,18 @@ async def activate_content(payload: ActivationPayload, request: Request):
         # Step 1: Retrieve article from Contentful
         raw_article = contentful_service.get_article(payload.entry_id)
 
-        # Step 2: Validate against Pydantic schema
+        # Step 2: Validate against Pydantic schema with safe field access
         try:
+            fields = raw_article.get("fields", {})
             article = ArticleIn(
-                title=raw_article["fields"]["title"],
-                body=raw_article["fields"]["body"],
-                summary=raw_article["fields"].get("summary"),
-                campaign_tags=raw_article["fields"]["campaignTags"],
-                alt_text=raw_article["fields"].get("altText"),
-                has_images=raw_article["fields"].get("hasImages", False),
-                cta_text=raw_article["fields"].get("ctaText"),
-                cta_url=raw_article["fields"].get("ctaUrl"),
+                title=fields.get("title") or "Untitled",
+                body=fields.get("body") or "",
+                summary=fields.get("summary"),
+                campaign_tags=fields.get("campaignTags") or [],
+                alt_text=fields.get("altText"),
+                has_images=fields.get("hasImages", False),
+                cta_text=fields.get("ctaText"),
+                cta_url=fields.get("ctaUrl"),
             )
         except Exception as e:
             errors.append(f"Validation error: {str(e)}")

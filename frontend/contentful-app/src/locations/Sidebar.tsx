@@ -95,22 +95,24 @@ const Sidebar = () => {
   };
 
   return (
-    <Stack spacing="spacingM">
-      <Subheading>AI Content Activation Engine</Subheading>
-      <Paragraph>
-        Enrich and activate this content in Marketo with AI-powered metadata generation.
-      </Paragraph>
+    <div style={{maxWidth: '280px', padding: '12px', fontSize: '14px'}}>
+      <Stack spacing="spacingS">
+        <Subheading style={{fontSize: '16px'}}>AI Content Activation</Subheading>
+        <Paragraph style={{fontSize: '12px', lineHeight: '1.4'}}>
+          Enrich and activate content with AI-powered metadata.
+        </Paragraph>
 
-      {/* Activation Button */}
-      <Button
-        variant="primary"
-        size="medium"
-        onClick={handleActivate}
-        isDisabled={isActivating}
-        isLoading={isActivating}
-      >
-        {isActivating ? 'Activating...' : 'Activate in Marketo'}
-      </Button>
+        {/* Activation Button */}
+        <Button
+          variant="primary"
+          size="small"
+          onClick={handleActivate}
+          isDisabled={isActivating}
+          isLoading={isActivating}
+          style={{width: '100%', fontSize: '12px'}}
+        >
+          {isActivating ? 'Activating...' : 'Activate in Marketo'}
+        </Button>
 
       {/* Loading State */}
       {isActivating && (
