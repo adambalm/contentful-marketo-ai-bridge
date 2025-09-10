@@ -63,7 +63,7 @@ def create_marketing_automation_guide_image():
     y_pos = 0.6
     x_positions = np.linspace(0.1, 0.9, len(workflow_steps))
 
-    for i, (step, color, x_pos) in enumerate(zip(workflow_steps, colors, x_positions)):
+    for i, (step, color, x_pos) in enumerate(zip(workflow_steps, colors, x_positions, strict=False)):
         # Draw circle for step
         circle = plt.Circle(
             (x_pos, y_pos), 0.08, color=color, alpha=0.8, transform=ax.transAxes
@@ -362,7 +362,7 @@ def test_generated_images_with_vision():
         "Upcoming webinar promotion for content activation best practices",
     ]
 
-    for img_file, context in zip(image_files, article_contexts):
+    for img_file, context in zip(image_files, article_contexts, strict=False):
         if Path(img_file).exists():
             print(f"\n📊 Testing {img_file}")
             print(f"   Context: {context}")

@@ -7,7 +7,7 @@ import logging
 import os
 import re
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 
 from openai import OpenAI
 
@@ -36,7 +36,7 @@ class AIProvider(ABC):
 
     def generate_alt_text_for_images(
         self, article_data: dict[str, Any]
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Generate alt text for images if present in article.
         Default implementation returns None - providers can override.
@@ -202,7 +202,7 @@ class OpenAIProvider(AIProvider):
 
     def generate_alt_text_for_images(
         self, article_data: dict[str, Any]
-    ) -> Optional[str]:
+    ) -> str | None:
         """Generate alt text for images using GPT-4o vision if images are present."""
         # Check both hasImages (camelCase) and has_images (snake_case)
         has_images = article_data.get("hasImages", False) or article_data.get(
@@ -354,7 +354,7 @@ class LocalModelProvider(AIProvider):
 
     def generate_alt_text_for_images(
         self, article_data: dict[str, Any]
-    ) -> Optional[str]:
+    ) -> str | None:
         """Generate alt text for images using Qwen 2.5VL 7b if images are present."""
         # Check both hasImages (camelCase) and has_images (snake_case)
         has_images = article_data.get("hasImages", False) or article_data.get(
@@ -422,6 +422,6 @@ class AIService:
         """Enrich content using the configured AI provider."""
         return self.provider.enrich_content(article_data)
 
-    def generate_alt_text(self, article_data: dict[str, Any]) -> Optional[str]:
+    def generate_alt_text(self, article_data: dict[str, Any]) -> str | None:
         """Generate alt text for images if present in article."""
         return self.provider.generate_alt_text_for_images(article_data)

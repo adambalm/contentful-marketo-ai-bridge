@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 
 # Load environment variables securely
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import requests
 
@@ -34,7 +34,7 @@ class VisionProvider(ABC):
     """Abstract base class for vision AI providers"""
 
     @abstractmethod
-    def generate_alt_text(self, image_url: str, context: Optional[str] = None) -> str:
+    def generate_alt_text(self, image_url: str, context: str | None = None) -> str:
         """Generate alt text for an image"""
         pass
 
@@ -47,7 +47,7 @@ class VisionProvider(ABC):
 class GPTVisionProvider(VisionProvider):
     """OpenAI GPT-4o Vision provider"""
 
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: str | None = None):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("OpenAI API key not found")
@@ -57,7 +57,7 @@ class GPTVisionProvider(VisionProvider):
 
         logger.info("GPT-4o Vision provider initialized")
 
-    def generate_alt_text(self, image_url: str, context: Optional[str] = None) -> str:
+    def generate_alt_text(self, image_url: str, context: str | None = None) -> str:
         """Generate descriptive alt text using GPT-4o vision"""
 
         try:
@@ -228,7 +228,7 @@ class QwenVisionProvider(VisionProvider):
         except Exception as e:
             logger.warning(f"Could not connect to local Qwen model: {e}")
 
-    def generate_alt_text(self, image_url: str, context: Optional[str] = None) -> str:
+    def generate_alt_text(self, image_url: str, context: str | None = None) -> str:
         """Generate alt text using local Qwen 2.5VL model"""
 
         try:
@@ -381,7 +381,7 @@ class QwenVisionProvider(VisionProvider):
 class VisionService:
     """Main vision service with provider selection"""
 
-    def __init__(self, provider: Optional[str] = None):
+    def __init__(self, provider: str | None = None):
         self.provider_name = provider or os.getenv("VISION_PROVIDER", "openai")
         self.provider = None
 
@@ -412,7 +412,7 @@ class VisionService:
                 logger.error(f"Fallback provider also failed: {fallback_error}")
                 self.provider = None
 
-    def generate_alt_text(self, image_url: str, context: Optional[str] = None) -> str:
+    def generate_alt_text(self, image_url: str, context: str | None = None) -> str:
         """Generate alt text for image URL"""
         if not self.provider:
             return "Vision service unavailable"

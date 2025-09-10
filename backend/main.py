@@ -37,8 +37,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://localhost:3001", 
-        "http://localhost:3002", 
+        "http://localhost:3001",
+        "http://localhost:3002",
         "http://localhost:3003",
         "https://app.contentful.com",
         "https://4ce44185-52a1-455d-a1d8-fe60f1be67bb.ctfcloud.net",
@@ -205,9 +205,14 @@ async def activate_content(payload: ActivationPayload, request: Request):
             timestamp=datetime.now(timezone.utc),
         )
         append_activation_log(result)
-        # Also write to Contentful (mock impl appends to JSONL for MVP)
+
+        # Create ActivationLog entry in Contentful with Management API
         with contextlib.suppress(Exception):
-            contentful_service.write_activation_log(result.model_dump())
+            log_data = result.model_dump()
+            log_data[
+                "marketo_list_id"
+            ] = payload.marketo_list_id  # Add list ID for logging
+            contentful_service.create_activation_log(log_data)
         return result
 
     except HTTPException:
@@ -227,8 +232,14 @@ async def activate_content(payload: ActivationPayload, request: Request):
             timestamp=datetime.now(timezone.utc),
         )
         append_activation_log(result)
+
+        # Create ActivationLog entry in Contentful with Management API
         with contextlib.suppress(Exception):
-            contentful_service.write_activation_log(result.model_dump())
+            log_data = result.model_dump()
+            log_data[
+                "marketo_list_id"
+            ] = payload.marketo_list_id  # Add list ID for logging
+            contentful_service.create_activation_log(log_data)
         return result
 
 

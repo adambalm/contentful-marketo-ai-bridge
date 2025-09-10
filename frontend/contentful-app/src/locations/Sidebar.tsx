@@ -196,7 +196,8 @@ const Sidebar = () => {
         This tool validates your content, enriches it with AI-generated metadata,
         and adds it to your Marketo campaign list. All actions are logged for audit purposes.
       </Note>
-    </Stack>
+      </Stack>
+    </div>
   );
 };
 

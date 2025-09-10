@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import contentful
+import contentful_management
 
 from .contentful import ContentfulService as MockContentfulService
 
@@ -29,21 +30,50 @@ class LiveContentfulService:
     Uses real Contentful Delivery API when credentials are available.
     """
 
-    def __init__(self, space_id: str | None = None, access_token: str | None = None):
+    def __init__(
+        self,
+        space_id: str | None = None,
+        access_token: str | None = None,
+        management_token: str | None = None,
+    ):
         self.space_id = space_id or os.getenv("CONTENTFUL_SPACE_ID")
         self.access_token = access_token or os.getenv("CONTENTFUL_ACCESS_TOKEN")
+        self.management_token = management_token or os.getenv(
+            "CONTENTFUL_MANAGEMENT_TOKEN"
+        )
         self.client = None
+        self.management_client = None
         self.live_mode = False
         self.mock_service = None
 
-        # Try to initialize live client
+        # Try to initialize live clients
         if self.space_id and self.access_token:
             try:
                 self.client = contentful.Client(self.space_id, self.access_token)
                 # Test connection
                 space = self.client.space()
                 self.live_mode = True
-                logger.info(f"✅ Live Contentful connected to space: {space.name}")
+                logger.info(
+                    f"✅ Live Contentful Delivery API connected to space: {space.name}"
+                )
+
+                # Initialize Management API client if token available
+                if self.management_token:
+                    try:
+                        self.management_client = contentful_management.Client(
+                            self.management_token
+                        )
+                        # Test management connection
+                        self.management_client.spaces().find(self.space_id)
+                        logger.info("✅ Live Contentful Management API connected")
+                    except Exception as e:
+                        logger.warning(f"Management API connection failed: {e}")
+                        self.management_client = None
+                else:
+                    logger.info(
+                        "Management token not found, ActivationLog write-back will use mock"
+                    )
+
             except Exception as e:
                 logger.warning(f"Contentful connection failed, using mock: {e}")
                 self.live_mode = False
@@ -162,6 +192,82 @@ class LiveContentfulService:
             return None
         except Exception as e:
             logger.error(f"Failed to read activation log: {e}")
+            return None
+
+    def create_activation_log(self, log_record: dict[str, Any]) -> str | None:
+        """
+        Create ActivationLog entry in Contentful using Management API.
+
+        Args:
+            log_record: ActivationResult data with fields:
+                - activation_id: Unique identifier
+                - entry_id: Source Contentful entry ID
+                - status: "success" or "error"
+                - processing_time: Duration in seconds
+                - enrichment_data: AI outputs
+                - marketo_response: Marketing platform response
+                - errors: List of errors if any
+                - timestamp: ISO timestamp
+
+        Returns:
+            Created entry ID if successful, None if failed
+        """
+        # Always write to local JSONL as backup
+        self.write_activation_log(log_record)
+
+        # Try to create in Contentful if Management API available
+        if not self.management_client:
+            logger.info("Management API not available, using local logging only")
+            return None
+
+        try:
+            # Prepare entry data according to ActivationLog content type
+            # Based on your feedback, using timestamp (Date), status (Symbol), details (Object)
+            entry_data = {
+                "content_type_id": "activationLog",
+                "fields": {
+                    "status": {
+                        "en-US": "Success"
+                        if log_record["status"] == "success"
+                        else "Error"
+                    },
+                    "details": {
+                        "en-US": {
+                            "activation_id": log_record["activation_id"],
+                            "entry_id": log_record["entry_id"],
+                            "timestamp": log_record["timestamp"].isoformat()
+                            if hasattr(log_record["timestamp"], "isoformat")
+                            else str(log_record["timestamp"]),
+                            "processing_time": log_record["processing_time"],
+                            "enrichment_data": log_record.get("enrichment_data"),
+                            "marketo_response": log_record.get("marketo_response"),
+                            "marketo_list_id": log_record.get(
+                                "marketo_list_id", "unknown"
+                            ),
+                            "errors": log_record.get("errors"),
+                        }
+                    },
+                },
+            }
+
+            # Create the entry
+            environment = (
+                self.management_client.spaces()
+                .find(self.space_id)
+                .environments()
+                .find("master")
+            )
+            entry = environment.entries().create(None, entry_data)
+
+            # Publish the entry
+            entry.publish()
+
+            logger.info(f"✅ ActivationLog entry created in Contentful: {entry.id}")
+            return entry.id
+
+        except Exception as e:
+            logger.error(f"Failed to create ActivationLog in Contentful: {e}")
+            # Graceful degradation - local logging still succeeded
             return None
 
     def is_live_mode(self) -> bool:
