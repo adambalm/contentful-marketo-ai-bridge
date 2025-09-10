@@ -38,10 +38,11 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:3001", 
-        "http://localhost:3002",
+        "http://localhost:3002", 
         "http://localhost:3003",
         "https://app.contentful.com",
         "https://4ce44185-52a1-455d-a1d8-fe60f1be67bb.ctfcloud.net",
+        "null",  # For file:// and app contexts
     ],
     allow_credentials=True,
     allow_methods=["*"],
